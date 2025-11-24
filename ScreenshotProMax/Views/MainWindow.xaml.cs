@@ -220,20 +220,43 @@ public partial class MainWindow : MetroWindow
                 _isDragging = true;
                 _lastMousePosition = position;
                 
-                // Prüfe ob auf Resize-Handle geklickt wurde
-                var bounds = selected.GetBounds();
-                var handleRect = new Rect(
-                    bounds.Right - 5, 
-                    bounds.Bottom - 5, 
-                    10, 
-                    10
-                );
-                
-                if (handleRect.Contains(position))
+                // Wenn es ein Text-Element ist, fokussiere die TextBox für Bearbeitung
+                if (selected.Type == AnnotationType.Text)
                 {
-                    _isResizing = true;
-                    _isDragging = false;
-                    Mouse.Capture(OverlayCanvas);
+                    // Gib der UI Zeit, die Auswahl zu verarbeiten, dann fokussiere
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        // Finde die TextBox im Visual Tree und fokussiere sie
+                        var container = FindTextBoxForAnnotation(selected);
+                        if (container != null)
+                        {
+                            container.Focus();
+                            container.SelectAll();
+                        }
+                    }), System.Windows.Threading.DispatcherPriority.Loaded);
+                }
+                
+                // Prüfe ob auf Resize-Handle geklickt wurde (nicht für Text-Elemente)
+                if (selected.Type != AnnotationType.Text)
+                {
+                    var bounds = selected.GetBounds();
+                    var handleRect = new Rect(
+                        bounds.Right - 5, 
+                        bounds.Bottom - 5, 
+                        10, 
+                        10
+                    );
+                    
+                    if (handleRect.Contains(position))
+                    {
+                        _isResizing = true;
+                        _isDragging = false;
+                        Mouse.Capture(OverlayCanvas);
+                    }
+                    else
+                    {
+                        Mouse.Capture(OverlayCanvas);
+                    }
                 }
                 else
                 {
@@ -259,14 +282,63 @@ public partial class MainWindow : MetroWindow
                 _isDrawing = true;
                 break;
             case AnnotationType.Text:
-                // Text is placed at clicked position, editable via TextBox
+                // Text wird platziert und sofort aktiviert für Bearbeitung
                 _isDrawing = false;
+                
+                // Automatisch das Text-Element auswählen und TextBox fokussieren
+                _activeAnnotation.IsSelected = true;
+                ViewModel.SelectedAnnotation = _activeAnnotation;
+                
+                // Gib der UI Zeit, das neue Element zu rendern, dann fokussiere
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    var textBox = FindTextBoxForAnnotation(_activeAnnotation);
+                    if (textBox != null)
+                    {
+                        textBox.Focus();
+                        textBox.SelectAll();
+                    }
+                }), System.Windows.Threading.DispatcherPriority.Loaded);
                 break;
             case AnnotationType.Number:
                 // Number is placed at clicked position
                 _isDrawing = false;
                 break;
         }
+    }
+
+    // Hilfsmethode zum Finden der TextBox für eine Annotation
+    private TextBox? FindTextBoxForAnnotation(AnnotationModel annotation)
+    {
+        // Durchsuche den Visual Tree nach der TextBox, die zu dieser Annotation gehört
+        return FindVisualChild<TextBox>(OverlayCanvas, tb => 
+        {
+            var dataContext = (tb.Parent as FrameworkElement)?.DataContext;
+            return dataContext == annotation;
+        });
+    }
+
+    // Generische Methode zum Durchsuchen des Visual Trees
+    private T? FindVisualChild<T>(DependencyObject parent, Func<T, bool>? predicate = null) where T : DependencyObject
+    {
+        if (parent == null)
+            return null;
+
+        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, i);
+
+            if (child is T typedChild && (predicate == null || predicate(typedChild)))
+            {
+                return typedChild;
+            }
+
+            var result = FindVisualChild(child, predicate);
+            if (result != null)
+                return result;
+        }
+
+        return null;
     }
 
     private void OverlayCanvas_MouseMove(object sender, MouseEventArgs e)

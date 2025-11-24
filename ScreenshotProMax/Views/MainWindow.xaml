@@ -464,7 +464,26 @@
                                  BorderThickness="0"
                                  CaretBrush="White"
                                  SelectionBrush="#80FFFFFF"
-                                 MinWidth="60"/>
+                                 MinWidth="60"
+                                 AcceptsReturn="False"
+                                 TextWrapping="NoWrap">
+                          <TextBox.Style>
+                            <Style TargetType="TextBox">
+                              <!-- TextBox ist standardmäßig schreibgeschützt -->
+                              <Setter Property="IsReadOnly" Value="True"/>
+                              <Setter Property="Cursor" Value="Arrow"/>
+                              <Setter Property="Focusable" Value="False"/>
+                              <Style.Triggers>
+                                <!-- Nur wenn ausgewählt, wird die TextBox bearbeitbar -->
+                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                  <Setter Property="IsReadOnly" Value="False"/>
+                                  <Setter Property="Cursor" Value="IBeam"/>
+                                  <Setter Property="Focusable" Value="True"/>
+                                </DataTrigger>
+                              </Style.Triggers>
+                            </Style>
+                          </TextBox.Style>
+                        </TextBox>
                       </Border>
                     </Canvas>
                   </DataTemplate>

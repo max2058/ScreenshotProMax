@@ -67,15 +67,57 @@ public partial class AnnotationModel : ObservableObject
             maxY = System.Math.Max(maxY, point.Y);
         }
 
-        // Padding für bessere Auswahl bei kleinen Objekten
-        double padding = Type == AnnotationType.Number || Type == AnnotationType.Text ? 20 : Thickness * 2;
-        
-        return new Rect(
-            minX - padding,
-            minY - padding,
-            maxX - minX + 2 * padding,
-            maxY - minY + 2 * padding
-        );
+        // Unterschiedliche Bounding Boxes für verschiedene Annotation-Typen
+        double padding;
+        double width;
+        double height;
+
+        switch (Type)
+        {
+            case AnnotationType.Text:
+                // Für Text: Schätze die Größe basierend auf Textlänge
+                // Mindestbreite 80px (wie im XAML MinWidth), aber skalierbar
+                var estimatedTextWidth = System.Math.Max(80, Text.Length * 10);
+                var estimatedTextHeight = 30; // Geschätzte Höhe für FontSize 16
+                
+                width = estimatedTextWidth * Scale;
+                height = estimatedTextHeight * Scale;
+                padding = 8; // Border Padding aus XAML
+                
+                return new Rect(
+                    minX - padding,
+                    minY - padding,
+                    width + 2 * padding,
+                    height + 2 * padding
+                );
+
+            case AnnotationType.Number:
+                // Für Nummern: Feste Größe basierend auf Badge-Dimensionen
+                var estimatedNumberWidth = 32; // Geschätzte Breite für Nummer
+                var estimatedNumberHeight = 32; // Runder Badge
+                
+                width = estimatedNumberWidth * Scale;
+                height = estimatedNumberHeight * Scale;
+                padding = 8; // Border Padding aus XAML
+                
+                return new Rect(
+                    minX - padding,
+                    minY - padding,
+                    width + 2 * padding,
+                    height + 2 * padding
+                );
+
+            default:
+                // Für Linien und Pfeile: Nutze die Thickness als Padding
+                padding = Thickness * 2;
+                
+                return new Rect(
+                    minX - padding,
+                    minY - padding,
+                    maxX - minX + 2 * padding,
+                    maxY - minY + 2 * padding
+                );
+        }
     }
 
     // Prüft ob ein Punkt innerhalb der Annotation liegt
