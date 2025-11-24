@@ -11,8 +11,7 @@ public enum AnnotationType
     Number,
     Text,
     Line,
-    Arrow,
-    Pen
+    Arrow
 }
 
 public partial class AnnotationModel : ObservableObject

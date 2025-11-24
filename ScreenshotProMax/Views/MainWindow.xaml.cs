@@ -82,9 +82,6 @@ public partial class MainWindow : MetroWindow
                 _activeAnnotation.Points.Add(position);
                 _isDrawing = true;
                 break;
-            case AnnotationType.Pen:
-                _isDrawing = true;
-                break;
             case AnnotationType.Text:
                 // Text is placed at clicked position, editable via TextBox
                 _isDrawing = false;
@@ -113,9 +110,6 @@ public partial class MainWindow : MetroWindow
                     _activeAnnotation.Points[1] = position;
                 }
                 break;
-            case AnnotationType.Pen:
-                _activeAnnotation.Points.Add(position);
-                break;
         }
     }
 
@@ -130,17 +124,6 @@ public partial class MainWindow : MetroWindow
         if (sender is RadioButton radio && radio.Tag is string tag && Enum.TryParse<AnnotationType>(tag, out var tool))
         {
             ViewModel.CurrentTool = tool;
-        }
-    }
-
-    private void ColorCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (sender is ComboBox combo && combo.SelectedItem is ComboBoxItem item && item.Tag is string hex)
-        {
-            if (ColorConverter.ConvertFromString(hex) is Color color)
-            {
-                ViewModel.CurrentColor = color;
-            }
         }
     }
 }

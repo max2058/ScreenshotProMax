@@ -15,341 +15,339 @@
         WindowStartupLocation="CenterScreen"
         SaveWindowPosition="True"
         BorderThickness="1">
-    <mah:MetroWindow.Resources>
-        <converters:PointsToPointCollectionConverter x:Key="PointsToPointCollectionConverter" />
-        
-        <Style TargetType="Button" x:Key="ToolbarButton" BasedOn="{StaticResource MahApps.Styles.Button}">
-            <Setter Property="Margin" Value="4,2" />
-            <Setter Property="Padding" Value="10,6" />
-            <Setter Property="Height" Value="32" />
-            <Setter Property="FontSize" Value="13" />
-        </Style>
-        
-        <Style TargetType="RadioButton" x:Key="ToolRadioButton" BasedOn="{StaticResource MahApps.Styles.RadioButton}">
+  <mah:MetroWindow.Resources>
+    <converters:PointsToPointCollectionConverter x:Key="PointsToPointCollectionConverter" />
+    <converters:OpacityToPercentageConverter x:Key="OpacityToPercentageConverter" />
+
+    <Style TargetType="Button" x:Key="ToolbarButton" BasedOn="{StaticResource MahApps.Styles.Button}">
+      <Setter Property="Margin" Value="4,2" />
+      <Setter Property="Padding" Value="10,6" />
+      <Setter Property="Height" Value="32" />
+      <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <Style TargetType="RadioButton" x:Key="ToolRadioButton" BasedOn="{StaticResource MahApps.Styles.RadioButton}">
       <Setter Property="Margin" Value="4,0" />
       <Setter Property="FontSize" Value="13" />
-        </Style>
-        
-        <Style x:Key="Local.VerticalSeparator" TargetType="Separator">
-          <Setter Property="LayoutTransform">
-            <Setter.Value>
-              <RotateTransform Angle="90"/>
-            </Setter.Value>
-          </Setter>
-          <Setter Property="Width" Value="1"/>
-          <Setter Property="Margin" Value="8,0"/>
-          <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Gray6}"/>
-        </Style>
-    </mah:MetroWindow.Resources>
-    
-    <mah:MetroWindow.DataContext>
-        <viewModels:MainViewModel />
-    </mah:MetroWindow.DataContext>
-    
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    </Style>
 
-        <!-- Toolbar -->
-        <Border Grid.Row="0" 
+    <Style x:Key="Local.VerticalSeparator" TargetType="Separator">
+      <Setter Property="LayoutTransform">
+        <Setter.Value>
+          <RotateTransform Angle="90"/>
+        </Setter.Value>
+      </Setter>
+      <Setter Property="Width" Value="1"/>
+      <Setter Property="Margin" Value="8,0"/>
+      <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Gray6}"/>
+    </Style>
+  </mah:MetroWindow.Resources>
+
+  <mah:MetroWindow.DataContext>
+    <viewModels:MainViewModel />
+  </mah:MetroWindow.DataContext>
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+    <!-- Toolbar -->
+    <Border Grid.Row="0" 
                 Background="{DynamicResource MahApps.Brushes.Accent4}" 
-                Padding="12,8" 
                 BorderBrush="{DynamicResource MahApps.Brushes.Accent}" 
-                BorderThickness="0,0,0,2">
-            <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <!-- Capture Buttons -->
-                <StackPanel Orientation="Horizontal" Margin="0,0,12,0">
-                    <TextBlock Text="📸 Aufnahme:" 
+                BorderThickness="0,2,0,2">
+      <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
+        <!-- Capture Buttons -->
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="📸 Aufnahme:" 
                                VerticalAlignment="Center" 
-                               Margin="0,0,8,0" 
                                FontWeight="SemiBold"
                                FontSize="14"/>
-                    <Button Style="{StaticResource ToolbarButton}" 
+          <Button Style="{StaticResource ToolbarButton}" 
                             Command="{Binding CaptureRegionCommand}" 
                             ToolTip="Screenshot-Bereich auswählen (Strg+D)">
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial Kind="CropFree" Width="16" Height="16" Margin="0,0,4,0"/>
+            <StackPanel Orientation="Horizontal">
+              <iconPacks:PackIconMaterial Kind="CropFree" Width="16" Height="16" Margin="0,0,4,0"/>
               <TextBlock><Run Language="de-de" Text="Bereich"/></TextBlock>
             </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource ToolbarButton}" 
+          </Button>
+          <Button Style="{StaticResource ToolbarButton}" 
                             Command="{Binding CaptureActiveWindowCommand}" 
                             ToolTip="Aktives Fenster aufnehmen">
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial Kind="WindowMaximize" Width="16" Height="16" Margin="0,0,4,0"/>
-                            <TextBlock Text="Fenster"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource ToolbarButton}" 
+            <StackPanel Orientation="Horizontal">
+              <iconPacks:PackIconMaterial Kind="WindowMaximize" Width="16" Height="16" Margin="0,0,4,0"/>
+              <TextBlock Text="Fenster"/>
+            </StackPanel>
+          </Button>
+          <Button Style="{StaticResource ToolbarButton}" 
                             Command="{Binding CaptureCommand}" 
                             ToolTip="Primären Bildschirm aufnehmen">
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial Kind="Monitor" Width="16" Height="16" Margin="0,0,4,0"/>
-                            <TextBlock Text="Bildschirm"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource ToolbarButton}" 
+            <StackPanel Orientation="Horizontal">
+              <iconPacks:PackIconMaterial Kind="Monitor" Width="16" Height="16" Margin="0,0,4,0"/>
+              <TextBlock Text="Bildschirm"/>
+            </StackPanel>
+          </Button>
+          <Button Style="{StaticResource ToolbarButton}" 
                             Command="{Binding CaptureAllScreensCommand}" 
                             ToolTip="Alle Bildschirme aufnehmen">
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial Kind="MonitorMultiple" Width="16" Height="16" Margin="0,0,4,0"/>
-                            <TextBlock Text="Alles"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-                
-                <Separator Style="{StaticResource Local.VerticalSeparator}" Height="30" />
-                
-                <!-- File Operations -->
-                <Button Style="{StaticResource ToolbarButton}" 
+            <StackPanel Orientation="Horizontal">
+              <iconPacks:PackIconMaterial Kind="MonitorMultiple" Width="16" Height="16" Margin="0,0,4,0"/>
+              <TextBlock Text="Alles"/>
+            </StackPanel>
+          </Button>
+        </StackPanel>
+
+        <Separator Style="{StaticResource Local.VerticalSeparator}" Foreground="Black" 
+         Height="30" Width="30" Background="Black"/>
+        
+        <!-- File Operations -->
+        <Button Style="{StaticResource ToolbarButton}" 
                         Command="{Binding SaveCommand}" 
                         IsEnabled="{Binding HasImage}"
                         ToolTip="Screenshot speichern">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial Kind="ContentSave" Width="16" Height="16" Margin="0,0,4,0"/>
-                        <TextBlock Text="Bild speichern"/>
-                    </StackPanel>
-                </Button>
-                <Button Style="{StaticResource ToolbarButton}" 
+          <StackPanel Orientation="Horizontal">
+            <iconPacks:PackIconMaterial Kind="ContentSave" Width="16" Height="16" Margin="0,0,4,0"/>
+            <TextBlock Text="Bild speichern"/>
+          </StackPanel>
+        </Button>
+        <Button Style="{StaticResource ToolbarButton}" 
                         Command="{Binding ClearAnnotationsCommand}" 
                         IsEnabled="{Binding HasImage}"
                         ToolTip="Alle Anmerkungen löschen">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial Kind="DeleteSweep" Width="16" Height="16" Margin="0,0,4,0"/>
-                        <TextBlock Text="Anmerkungen Löschen"/>
-                    </StackPanel>
-                </Button>
-                
-                <Separator Style="{StaticResource Local.VerticalSeparator}" Height="30" />
-                
-                <!-- Tools -->
-                <StackPanel Orientation="Horizontal" Margin="8,0">
-                    <TextBlock Text="🎨 Werkzeug:" 
-                               VerticalAlignment="Center" 
-                               Margin="0,0,8,0"
-                               FontWeight="SemiBold"
-                               FontSize="14"/>
-                    <RadioButton Content="Pfeil" 
-                                GroupName="Tools" 
-                                Tag="Arrow" 
-                                IsChecked="True" 
-                                Checked="ToolRadio_Checked" 
-                                Style="{StaticResource ToolRadioButton}"
-                                Background="Transparent"/>
-                    <RadioButton Content="Linie" 
-                                GroupName="Tools" 
-                                Tag="Line" 
-                                Checked="ToolRadio_Checked" 
-                                Style="{StaticResource ToolRadioButton}"
-                                 Background="Transparent"/>
-                    <RadioButton Content="Text" 
-                                GroupName="Tools" 
-                                Tag="Text" 
-                                Checked="ToolRadio_Checked" 
-                                Style="{StaticResource ToolRadioButton}"
-                                 Background="Transparent"/>
-                    <RadioButton Content="Nummer" 
-                                GroupName="Tools" 
-                                Tag="Number" 
-                                Checked="ToolRadio_Checked" 
-                                Style="{StaticResource ToolRadioButton}"
-                                 Background="Transparent"/>
-                    <RadioButton Content="Freihand" 
-                                GroupName="Tools" 
-                                Tag="Pen" 
-                                Checked="ToolRadio_Checked" 
-                                Style="{StaticResource ToolRadioButton}"
-                                 Background="Transparent"/>
-                </StackPanel>
-                
-                <Separator Style="{StaticResource Local.VerticalSeparator}" Height="30" />
-                
-                <!-- Color -->
-                <StackPanel Orientation="Horizontal" Margin="8,0">
-                    <TextBlock Text="Farbe:" 
-                               VerticalAlignment="Center" 
-                               Margin="0,0,6,0"
-                               FontSize="13"/>
-                    <ComboBox Width="110" 
-                             SelectionChanged="ColorCombo_SelectionChanged" 
-                             SelectedIndex="0"
-                             Style="{StaticResource MahApps.Styles.ComboBox}">
-                        <ComboBoxItem Content="Rot" Tag="#FFe74c3c" />
-                        <ComboBoxItem Content="Gelb" Tag="#FFf1c40f" />
-                        <ComboBoxItem Content="Grün" Tag="#FF2ecc71" />
-                        <ComboBoxItem Content="Cyan" Tag="#FF1abc9c" />
-                        <ComboBoxItem Content="Lila" Tag="#FF8e44ad" />
-                    </ComboBox>
-                </StackPanel>
-                
-                <!-- Thickness -->
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Dicke:" 
-                               VerticalAlignment="Center" 
-                               Margin="0,0,6,0"
-                               FontSize="13"/>
-                    <Slider Minimum="1" 
-                           Maximum="12" 
-                           Value="{Binding CurrentThickness, Mode=TwoWay}"
-                           Width="90"
-                           Style="{StaticResource MahApps.Styles.Slider}"/>
-                </StackPanel>
-                
-                <!-- Opacity -->
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Transparenz:" 
-                               VerticalAlignment="Center" 
-                               Margin="0,0,6,0"
-                               FontSize="13"/>
-                    <Slider Minimum="0.2" 
-                           Maximum="1" 
-                           Value="{Binding CurrentOpacity, Mode=TwoWay}"
-                           Width="100"
-                           Style="{StaticResource MahApps.Styles.Slider}"/>
-                </StackPanel>
-            </WrapPanel>
-        </Border>
+          <StackPanel Orientation="Horizontal">
+            <iconPacks:PackIconMaterial Kind="DeleteSweep" Width="16" Height="16" Margin="0,0,4,0"/>
+            <TextBlock Text="Anmerkungen Löschen"/>
+          </StackPanel>
+        </Button>
 
-        <!-- Canvas Area -->
-        <ScrollViewer Grid.Row="1" 
-                     Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+      </WrapPanel>
+    </Border>
+
+    <Border Grid.Row="1" 
+      Background="{DynamicResource MahApps.Brushes.Accent4}" 
+      BorderBrush="{DynamicResource MahApps.Brushes.Accent}" 
+      BorderThickness="0,0,0,2">
+      <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
+        <!-- Tools -->
+        <StackPanel Orientation="Horizontal" Margin="8,0">
+          <TextBlock Text="🎨 Werkzeug:" 
+             VerticalAlignment="Center" 
+             FontWeight="SemiBold"
+             FontSize="14"/>
+          <RadioButton Content="Pfeil" 
+              GroupName="Tools" 
+              Tag="Arrow" 
+              IsChecked="True" 
+              Checked="ToolRadio_Checked" 
+              Style="{StaticResource ToolRadioButton}"
+              Background="Transparent"/>
+          <RadioButton Content="Linie" 
+              GroupName="Tools" 
+              Tag="Line" 
+              Checked="ToolRadio_Checked" 
+              Style="{StaticResource ToolRadioButton}"
+              Background="Transparent"/>
+          <RadioButton Content="Text" 
+              GroupName="Tools" 
+              Tag="Text" 
+              Checked="ToolRadio_Checked" 
+              Style="{StaticResource ToolRadioButton}"
+              Background="Transparent"/>
+          <RadioButton Content="Nummer" 
+              GroupName="Tools" 
+              Tag="Number" 
+              Checked="ToolRadio_Checked" 
+              Style="{StaticResource ToolRadioButton}"
+              Background="Transparent"/>
+        </StackPanel>
+
+        <Separator Style="{StaticResource Local.VerticalSeparator}" Foreground="Black" 
+         Height="30" Width="30" Background="Black"/>
+
+        <!-- Color -->
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Farbe:" 
+             VerticalAlignment="Center" 
+           
+             FontSize="13"/>
+          <mah:ColorPicker SelectedColor="{Binding CurrentColor, Mode=TwoWay}" />
+        </StackPanel>
+
+        <!-- Thickness -->
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Dicke:" 
+             VerticalAlignment="Center" 
+             Margin="0,0,6,0"
+             FontSize="13"/>
+          <Slider Minimum="1" 
+         Maximum="12" 
+         Value="{Binding CurrentThickness, Mode=TwoWay}"
+         Width="90"
+         Style="{StaticResource MahApps.Styles.Slider}"/>
+          <TextBlock Text="{Binding CurrentThickness, StringFormat='{}{0:0}'}"
+             VerticalAlignment="Center"
+             Margin="6,0,0,0"
+             FontSize="13"
+             MinWidth="20"/>
+        </StackPanel>
+
+        <!-- Opacity -->
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Transparenz:" 
+             VerticalAlignment="Center" 
+             Margin="0,0,6,0"
+             FontSize="13"/>
+          <Slider Minimum="0.2" 
+         Maximum="1" 
+         Value="{Binding CurrentOpacity, Mode=TwoWay}"
+         Width="100"
+         Style="{StaticResource MahApps.Styles.Slider}"/>
+          <TextBlock VerticalAlignment="Center"
+             Margin="6,0,0,0"
+             FontSize="13"
+             MinWidth="35">
+            <TextBlock.Text>
+              <MultiBinding StringFormat="{}{0:0}%">
+                <Binding Path="CurrentOpacity" Converter="{StaticResource OpacityToPercentageConverter}" />
+              </MultiBinding>
+            </TextBlock.Text>
+          </TextBlock>
+        </StackPanel>
+
+      </WrapPanel>
+    </Border>
+
+
+    <!-- Canvas Area -->
+    <ScrollViewer Grid.Row="2" 
+                     Background="{DynamicResource MahApps.Brushes.Button.Flat.Background}"
                      HorizontalScrollBarVisibility="Auto"
                      VerticalScrollBarVisibility="Auto">
-            <Grid>
-                <TextBlock Text="📸 Drücken Sie Strg+D oder wählen Sie eine Aufnahmeoption"
+      <Grid>
+        <TextBlock Text="📸 Drücken Sie Strg+D oder wählen Sie eine Aufnahmeoption"
                           HorizontalAlignment="Center"
                           VerticalAlignment="Center"
                           FontSize="18"
                           Foreground="{DynamicResource MahApps.Brushes.Gray2}"
                           Visibility="{Binding HasImage, Converter={x:Static converters:BooleanToVisibilityConverter.InvertedInstance}}"/>
-                
-                <Image x:Name="ScreenshotImage" 
-                      Source="{Binding CapturedImage}" 
-                      Stretch="None"/>
-                      
-                <Canvas x:Name="OverlayCanvas" 
-                       Background="Transparent"
-                       Width="{Binding ElementName=ScreenshotImage, Path=ActualWidth}"
-                       Height="{Binding ElementName=ScreenshotImage, Path=ActualHeight}"
-                       MouseDown="OverlayCanvas_MouseDown"
-                       MouseMove="OverlayCanvas_MouseMove"
-                       MouseUp="OverlayCanvas_MouseUp"
-                       Visibility="{Binding HasImage, Converter={x:Static converters:BooleanToVisibilityConverter.Instance}}">
-                    <ItemsControl ItemsSource="{Binding Annotations}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <Canvas />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type models:AnnotationModel}">
-                                <Canvas>
-                                    <!-- Line/Arrow -->
-                                    <Line Stroke="{Binding StrokeBrush}" 
-                                         StrokeThickness="{Binding Thickness}" 
-                                         X1="{Binding Points[0].X}" 
-                                         Y1="{Binding Points[0].Y}" 
-                                         X2="{Binding Points[1].X}" 
-                                         Y2="{Binding Points[1].Y}">
-                                        <Line.Style>
-                                            <Style TargetType="Line">
-                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Type}" Value="Line">
-                                                        <Setter Property="Visibility" Value="Visible" />
-                                                        <Setter Property="StrokeStartLineCap" Value="Round" />
-                                                        <Setter Property="StrokeEndLineCap" Value="Round" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Type}" Value="Arrow">
-                                                        <Setter Property="Visibility" Value="Visible" />
-                                                        <Setter Property="StrokeStartLineCap" Value="Round" />
-                                                        <Setter Property="StrokeEndLineCap" Value="Triangle" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Line.Style>
-                                    </Line>
-                                    
-                                    <!-- Pen (Freehand) -->
-                                    <Polyline StrokeThickness="{Binding Thickness}" 
-                                             Stroke="{Binding StrokeBrush}" 
-                                             Points="{Binding Points, Converter={StaticResource PointsToPointCollectionConverter}}" 
-                                             StrokeLineJoin="Round" 
-                                             StrokeStartLineCap="Round" 
-                                             StrokeEndLineCap="Round">
-                                        <Polyline.Style>
-                                            <Style TargetType="Polyline">
-                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Type}" Value="Pen">
-                                                        <Setter Property="Visibility" Value="Visible" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Polyline.Style>
-                                    </Polyline>
-                                    
-                                    <!-- Number Badge -->
-                                    <Border Background="{Binding FillBrush}" 
-                                           BorderBrush="White" 
-                                           BorderThickness="2" 
-                                           CornerRadius="16"
-                                           Padding="8,4"
-                                           Canvas.Left="{Binding Points[0].X}"
-                                           Canvas.Top="{Binding Points[0].Y}">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Type}" Value="Number">
-                                                        <Setter Property="Visibility" Value="Visible" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                        <TextBlock Text="{Binding Text}" 
-                                                  Foreground="White" 
-                                                  FontWeight="Bold"
-                                                  FontSize="14"/>
-                                    </Border>
-                                    
-                                    <!-- Text Label - Editable -->
-                                    <Border Background="{Binding FillBrush}" 
-                                           BorderBrush="White" 
-                                           BorderThickness="2" 
-                                           CornerRadius="4"
-                                           Padding="8,4"
-                                           MinWidth="80"
-                                           Canvas.Left="{Binding Points[0].X}"
-                                           Canvas.Top="{Binding Points[0].Y}">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Type}" Value="Text">
-                                                        <Setter Property="Visibility" Value="Visible" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                        <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" 
-                                                Foreground="White" 
-                                                FontSize="16"
-                                                FontWeight="SemiBold"
-                                                Background="Transparent"
-                                                BorderThickness="0"
-                                                CaretBrush="White"
-                                                SelectionBrush="#80FFFFFF"
-                                                MinWidth="60"/>
-                                    </Border>
-                                </Canvas>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </Canvas>
-            </Grid>
-        </ScrollViewer>
-    </Grid>
+
+        <!-- Neuer Border nur um das eigentliche Screenshot-Bild + Overlay -->
+        <Border BorderBrush="Black"
+                        BorderThickness="2"
+                        Padding="0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Visibility="{Binding HasImage, Converter={x:Static converters:BooleanToVisibilityConverter.Instance}}">
+          <Grid>
+            <Image x:Name="ScreenshotImage"
+                               Source="{Binding CapturedImage}"
+                               Stretch="None"/>
+            <Canvas x:Name="OverlayCanvas"
+                                Background="Transparent"
+                                Width="{Binding ElementName=ScreenshotImage, Path=ActualWidth}"
+                                Height="{Binding ElementName=ScreenshotImage, Path=ActualHeight}"
+                                MouseDown="OverlayCanvas_MouseDown"
+                                MouseMove="OverlayCanvas_MouseMove"
+                                MouseUp="OverlayCanvas_MouseUp">
+              <ItemsControl ItemsSource="{Binding Annotations}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <Canvas />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate DataType="{x:Type models:AnnotationModel}">
+                    <Canvas>
+                      <!-- Line/Arrow -->
+                      <Line Stroke="{Binding StrokeBrush}" 
+                                                 StrokeThickness="{Binding Thickness}" 
+                                                 X1="{Binding Points[0].X}" 
+                                                 Y1="{Binding Points[0].Y}" 
+                                                 X2="{Binding Points[1].X}" 
+                                                 Y2="{Binding Points[1].Y}">
+                        <Line.Style>
+                          <Style TargetType="Line">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                              <DataTrigger Binding="{Binding Type}" Value="Line">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Setter Property="StrokeStartLineCap" Value="Round" />
+                                <Setter Property="StrokeEndLineCap" Value="Round" />
+                              </DataTrigger>
+                              <DataTrigger Binding="{Binding Type}" Value="Arrow">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Setter Property="StrokeStartLineCap" Value="Round" />
+                                <Setter Property="StrokeEndLineCap" Value="Triangle" />
+                              </DataTrigger>
+                            </Style.Triggers>
+                          </Style>
+                        </Line.Style>
+                      </Line>
+
+                      <!-- Number Badge -->
+                      <Border Background="{Binding FillBrush}" 
+                                                   BorderBrush="White" 
+                                                   BorderThickness="2" 
+                                                   CornerRadius="16"
+                                                   Padding="8,4"
+                                                   Canvas.Left="{Binding Points[0].X}"
+                                                   Canvas.Top="{Binding Points[0].Y}">
+                        <Border.Style>
+                          <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                              <DataTrigger Binding="{Binding Type}" Value="Number">
+                                <Setter Property="Visibility" Value="Visible" />
+                              </DataTrigger>
+                            </Style.Triggers>
+                          </Style>
+                        </Border.Style>
+                        <TextBlock Text="{Binding Text}" 
+                                                          Foreground="White" 
+                                                          FontWeight="Bold"
+                                                          FontSize="14"/>
+                      </Border>
+
+                      <!-- Text Label - Editable -->
+                      <Border Background="{Binding FillBrush}" 
+                                                   BorderBrush="White" 
+                                                   BorderThickness="2" 
+                                                   CornerRadius="4"
+                                                   Padding="8,4"
+                                                   MinWidth="80"
+                                                   Canvas.Left="{Binding Points[0].X}"
+                                                   Canvas.Top="{Binding Points[0].Y}">
+                        <Border.Style>
+                          <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                              <DataTrigger Binding="{Binding Type}" Value="Text">
+                                <Setter Property="Visibility" Value="Visible" />
+                              </DataTrigger>
+                            </Style.Triggers>
+                          </Style>
+                        </Border.Style>
+                        <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" 
+                                                        Foreground="White" 
+                                                        FontSize="16"
+                                                        FontWeight="SemiBold"
+                                                        Background="Transparent"
+                                                        BorderThickness="0"
+                                                        CaretBrush="White"
+                                                        SelectionBrush="#80FFFFFF"
+                                                        MinWidth="60"/>
+                      </Border>
+                    </Canvas>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </Canvas>
+          </Grid>
+        </Border>
+      </Grid>
+    </ScrollViewer>
+  </Grid>
 </mah:MetroWindow>

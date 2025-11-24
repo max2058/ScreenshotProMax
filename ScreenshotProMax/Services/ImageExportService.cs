@@ -13,7 +13,6 @@ public class ImageExportService
 {
     public Task SaveAsync(string filePath, BitmapSource background, ObservableCollection<AnnotationModel> annotations)
     {
-        // Render and encode must run on WPF Dispatcher (STA) because we use WPF visual and bitmap classes.
         return Application.Current.Dispatcher.InvokeAsync(() =>
         {
             var drawingVisual = new DrawingVisual();
@@ -24,7 +23,7 @@ public class ImageExportService
 
                 foreach (var annotation in annotations)
                 {
-                    DrawAnnotation(context, annotation);
+                    DrawAnnotation(context, annotation); // kein Offset mehr
                 }
             }
 
@@ -58,9 +57,6 @@ public class ImageExportService
             case AnnotationType.Arrow:
                 DrawLine(context, annotation, arrow: true);
                 break;
-            case AnnotationType.Pen:
-                DrawPen(context, annotation);
-                break;
             case AnnotationType.Text:
                 DrawText(context, annotation.Text, annotation);
                 break;
@@ -87,24 +83,6 @@ public class ImageExportService
         context.DrawLine(pen, p1, p2);
     }
 
-    private static void DrawPen(DrawingContext context, AnnotationModel annotation)
-    {
-        if (annotation.Points.Count < 2)
-        {
-            return;
-        }
-
-        var geometry = new StreamGeometry();
-        using (var sgc = geometry.Open())
-        {
-            sgc.BeginFigure(annotation.Points[0], false, false);
-            sgc.PolyLineTo(annotation.Points.Skip(1).ToList(), true, false);
-        }
-        geometry.Freeze();
-        var pen = new Pen(annotation.StrokeBrush, annotation.Thickness) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
-        context.DrawGeometry(null, pen, geometry);
-    }
-
     private static void DrawText(DrawingContext context, string text, AnnotationModel annotation)
     {
         var formatted = new FormattedText(
@@ -124,7 +102,6 @@ public class ImageExportService
     {
         var origin = annotation.Points[0];
         var size = 28 + annotation.Text.Length * 2;
-        var rect = new Rect(origin.X - size / 2, origin.Y - size / 2, size, size);
         var background = new SolidColorBrush(annotation.Color)
         {
             Opacity = annotation.Opacity * 0.9
