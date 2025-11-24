@@ -7,10 +7,11 @@ using System.Windows.Media;
 using ScreenshotProMax.Models;
 using ScreenshotProMax.Services;
 using ScreenshotProMax.ViewModels;
+using MahApps.Metro.Controls;
 
 namespace ScreenshotProMax.Views;
 
-public partial class MainWindow : Window
+public partial class MainWindow : MetroWindow
 {
     private AnnotationModel? _activeAnnotation;
     private bool _isDrawing;
@@ -21,7 +22,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        Loaded += MainWindow_Loaded;
+        Loaded += MainWindow_Loaded; 
         Closed += MainWindow_Closed;
     }
 
@@ -85,15 +86,11 @@ public partial class MainWindow : Window
                 _isDrawing = true;
                 break;
             case AnnotationType.Text:
-                if (string.IsNullOrWhiteSpace(_activeAnnotation.Text))
-                {
-                    _activeAnnotation.Text = "Text";
-                }
-                _activeAnnotation.Points.Add(position);
+                // Text is placed at clicked position, editable via TextBox
                 _isDrawing = false;
                 break;
             case AnnotationType.Number:
-                _activeAnnotation.Points.Add(position);
+                // Number is placed at clicked position
                 _isDrawing = false;
                 break;
         }

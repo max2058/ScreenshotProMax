@@ -133,6 +133,10 @@ public partial class MainViewModel : ObservableObject
             annotation.Number = NextNumber++;
             annotation.Text = annotation.Number.ToString();
         }
+        else if (CurrentTool == AnnotationType.Text)
+        {
+            annotation.Text = "Text eingeben...";
+        }
 
         Annotations.Add(annotation);
         return annotation;
