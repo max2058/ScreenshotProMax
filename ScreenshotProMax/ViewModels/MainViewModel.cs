@@ -271,6 +271,21 @@ public partial class MainViewModel : ObservableObject
         return null;
     }
 
+    public AnnotationModel? FindAnnotationAt(Point point)
+    {
+        // Suche von hinten nach vorne (neueste Anmerkungen zuerst)
+        for (int i = Annotations.Count - 1; i >= 0; i--)
+        {
+            var annotation = Annotations[i];
+            if (annotation.HitTest(point))
+            {
+                return annotation;
+            }
+        }
+
+        return null;
+    }
+
     public void MoveSelectedAnnotation(Vector offset)
     {
         if (SelectedAnnotation == null) return;
@@ -340,5 +355,36 @@ public partial class MainViewModel : ObservableObject
     public void ResetZoom()
     {
         ZoomLevel = 1.0;
+    }
+
+    public void EraseAnnotation(AnnotationModel annotation)
+    {
+        if (annotation == null) return;
+
+        Annotations.Remove(annotation);
+        
+        // Nummerierung anpassen wenn eine Nummer gelöscht wurde
+        if (annotation.Type == AnnotationType.Number)
+        {
+            NextNumber = Annotations.Where(a => a.Type == AnnotationType.Number)
+                                   .Select(a => a.Number)
+                                   .DefaultIfEmpty(0)
+                                   .Max() + 1;
+        }
+
+        // Füge zur Undo-Stack hinzu für mögliches Rückgängigmachen
+        _undoStack.Push(annotation);
+        if (_undoStack.Count > MaxUndoSteps)
+        {
+            var items = _undoStack.ToList();
+            _undoStack.Clear();
+            for (int i = items.Count - MaxUndoSteps; i < items.Count; i++)
+            {
+                _undoStack.Push(items[i]);
+            }
+        }
+
+        OnPropertyChanged(nameof(CanUndo));
+        UndoCommand.NotifyCanExecuteChanged();
     }
 }

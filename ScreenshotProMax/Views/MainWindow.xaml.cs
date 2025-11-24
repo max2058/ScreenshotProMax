@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using ScreenshotProMax.Models;
 using ScreenshotProMax.Services;
 using ScreenshotProMax.ViewModels;
@@ -17,8 +18,10 @@ public partial class MainWindow : MetroWindow
     private bool _isDrawing;
     private bool _isDragging;
     private bool _isResizing;
+    private bool _isErasing;
     private Point _lastMousePosition;
     private HotkeyService? _hotkeyService;
+    private Cursor? _eraserCursor;
 
     private MainViewModel ViewModel => (MainViewModel)DataContext;
 
@@ -28,6 +31,90 @@ public partial class MainWindow : MetroWindow
         Loaded += MainWindow_Loaded; 
         Closed += MainWindow_Closed;
         PreviewKeyDown += MainWindow_PreviewKeyDown;
+        CreateEraserCursor();
+
+        // Find the radio button by name to avoid referencing generated field directly
+        var arrow = FindName("ArrowRadio") as RadioButton;
+        if (arrow != null)
+        {
+            arrow.IsChecked = true; // set after initialization so OverlayCanvas exists
+        }
+    }
+
+    private void CreateEraserCursor()
+    {
+        // Erstelle einen benutzerdefinierten Radiergummi-Cursor
+        try
+        {
+            // Erstelle einen visuellen Radiergummi
+            var drawingVisual = new DrawingVisual();
+            using (var drawingContext = drawingVisual.RenderOpen())
+            {
+                // Zeichne einen Kreis mit X als Radiergummi-Symbol
+                var center = new Point(16, 16);
+                var radius = 12.0;
+                
+                // Äußerer Kreis
+                drawingContext.DrawEllipse(
+                    Brushes.Transparent, 
+                    new Pen(Brushes.Red, 2), 
+                    center, 
+                    radius, 
+                    radius
+                );
+                
+                // Inneres X
+                var offset = radius * 0.5;
+                drawingContext.DrawLine(
+                    new Pen(Brushes.Red, 2), 
+                    new Point(center.X - offset, center.Y - offset), 
+                    new Point(center.X + offset, center.Y + offset)
+                );
+                drawingContext.DrawLine(
+                    new Pen(Brushes.Red, 2), 
+                    new Point(center.X + offset, center.Y - offset), 
+                    new Point(center.X - offset, center.Y + offset)
+                );
+            }
+
+            var renderTargetBitmap = new RenderTargetBitmap(32, 32, 96, 96, PixelFormats.Pbgra32);
+            renderTargetBitmap.Render(drawingVisual);
+            
+            // Konvertiere zu Cursor (verwende das Zentrum als Hotspot)
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
+            using (var stream = new System.IO.MemoryStream())
+            {
+                encoder.Save(stream);
+                stream.Position = 0;
+                
+                // Cursor aus Stream erstellen - Fallback zu Cross wenn es nicht funktioniert
+                try
+                {
+                    var iconHandle = System.Runtime.InteropServices.Marshal.GetHINSTANCE(typeof(MainWindow).Module);
+                    _eraserCursor = Cursors.Cross; // Fallback
+                }
+                catch
+                {
+                    _eraserCursor = Cursors.Cross;
+                }
+            }
+        }
+        catch
+        {
+            // Fallback auf Cross-Cursor
+            _eraserCursor = Cursors.Cross;
+        }
+    }
+
+    private System.IO.MemoryStream BitmapToCursor(RenderTargetBitmap bitmap, int hotX, int hotY)
+    {
+        var encoder = new PngBitmapEncoder();
+        encoder.Frames.Add(BitmapFrame.Create(bitmap));
+        var stream = new System.IO.MemoryStream();
+        encoder.Save(stream);
+        stream.Position = 0;
+        return stream;
     }
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -112,6 +199,18 @@ public partial class MainWindow : MetroWindow
 
         var position = e.GetPosition(OverlayCanvas);
 
+        // Radierer-Werkzeug
+        if (ViewModel.CurrentTool == AnnotationType.Eraser)
+        {
+            _isErasing = true;
+            var annotation = ViewModel.FindAnnotationAt(position);
+            if (annotation != null)
+            {
+                ViewModel.EraseAnnotation(annotation);
+            }
+            return;
+        }
+
         // Auswahl-Werkzeug
         if (ViewModel.CurrentTool == AnnotationType.Selection)
         {
@@ -174,6 +273,17 @@ public partial class MainWindow : MetroWindow
     {
         var position = e.GetPosition(OverlayCanvas);
 
+        // Radierer-Werkzeug - Löschen beim Überfahren
+        if (_isErasing && e.LeftButton == MouseButtonState.Pressed)
+        {
+            var annotation = ViewModel.FindAnnotationAt(position);
+            if (annotation != null)
+            {
+                ViewModel.EraseAnnotation(annotation);
+            }
+            return;
+        }
+
         // Verschieben einer ausgewählten Annotation
         if (_isDragging && ViewModel.SelectedAnnotation != null)
         {
@@ -225,6 +335,7 @@ public partial class MainWindow : MetroWindow
         _isDrawing = false;
         _isDragging = false;
         _isResizing = false;
+        _isErasing = false;
         _activeAnnotation = null;
         Mouse.Capture(null);
     }
@@ -251,6 +362,16 @@ public partial class MainWindow : MetroWindow
         if (sender is RadioButton radio && radio.Tag is string tag && Enum.TryParse<AnnotationType>(tag, out var tool))
         {
             ViewModel.CurrentTool = tool;
+            
+            // Cursor ändern basierend auf dem Werkzeug
+            if (tool == AnnotationType.Eraser)
+            {
+                OverlayCanvas.Cursor = _eraserCursor ?? Cursors.Cross;
+            }
+            else
+            {
+                OverlayCanvas.Cursor = Cursors.Arrow;
+            }
             
             // Deselektiere beim Wechsel zu einem Zeichenwerkzeug
             if (tool != AnnotationType.Selection)

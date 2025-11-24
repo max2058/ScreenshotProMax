@@ -172,9 +172,9 @@
              FontWeight="SemiBold"
              FontSize="14"/>
           <RadioButton Content="Pfeil" 
+              x:Name="ArrowRadio"
               GroupName="Tools" 
               Tag="Arrow" 
-              IsChecked="True" 
               Checked="ToolRadio_Checked" 
               Style="{StaticResource ToolRadioButton}"
               Background="Transparent"/>
@@ -203,6 +203,13 @@
               Style="{StaticResource ToolRadioButton}"
               Background="Transparent"
               ToolTip="Anmerkungen auswählen, verschieben und skalieren"/>
+          <RadioButton Content="Radierer" 
+              GroupName="Tools" 
+              Tag="Eraser" 
+              Checked="ToolRadio_Checked" 
+              Style="{StaticResource ToolRadioButton}"
+              Background="Transparent"
+              ToolTip="Anmerkungen durch Überfahren löschen"/>
         </StackPanel>
 
         <Separator Style="{StaticResource Local.VerticalSeparator}" Foreground="Black" 
