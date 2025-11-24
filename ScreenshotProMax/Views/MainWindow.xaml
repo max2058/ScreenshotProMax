@@ -353,12 +353,29 @@
                               <DataTrigger Binding="{Binding Type}" Value="Arrow">
                                 <Setter Property="Visibility" Value="Visible" />
                                 <Setter Property="StrokeStartLineCap" Value="Round" />
-                                <Setter Property="StrokeEndLineCap" Value="Triangle" />
+                                <Setter Property="StrokeEndLineCap" Value="Round" />
                               </DataTrigger>
                             </Style.Triggers>
                           </Style>
                         </Line.Style>
                       </Line>
+                      
+                      <!-- Pfeilspitze als gefülltes Dreieck -->
+                      <Polygon Fill="{Binding StrokeBrush}" 
+                               Stroke="{Binding StrokeBrush}"
+                               StrokeThickness="1"
+                               Points="{Binding ArrowHeadPoints}">
+                        <Polygon.Style>
+                          <Style TargetType="Polygon">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                              <DataTrigger Binding="{Binding Type}" Value="Arrow">
+                                <Setter Property="Visibility" Value="Visible" />
+                              </DataTrigger>
+                            </Style.Triggers>
+                          </Style>
+                        </Polygon.Style>
+                      </Polygon>
                       
                       <!-- Auswahl-Highlight für Linien/Pfeile -->
                       <Line Stroke="DodgerBlue" 

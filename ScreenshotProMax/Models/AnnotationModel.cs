@@ -45,8 +45,159 @@ public partial class AnnotationModel : ObservableObject
     [ObservableProperty]
     private double scale = 1.0;
 
+    public AnnotationModel()
+    {
+        // Reagiere auf Änderungen der Points-Collection
+        Points.CollectionChanged += (s, e) =>
+        {
+            OnPropertyChanged(nameof(ArrowHeadPoints));
+            OnPropertyChanged(nameof(ArrowHeadTip));
+            OnPropertyChanged(nameof(ArrowHeadLeft));
+            OnPropertyChanged(nameof(ArrowHeadRight));
+        };
+    }
+
+    partial void OnThicknessChanged(double value)
+    {
+        // Aktualisiere Pfeilspitzen-Punkte wenn Thickness sich ändert
+        OnPropertyChanged(nameof(ArrowHeadPoints));
+        OnPropertyChanged(nameof(ArrowHeadTip));
+        OnPropertyChanged(nameof(ArrowHeadLeft));
+        OnPropertyChanged(nameof(ArrowHeadRight));
+    }
+
     public SolidColorBrush StrokeBrush => new(Color) { Opacity = Opacity };
     public SolidColorBrush FillBrush => new(Color) { Opacity = Opacity * 0.8 };
+
+    // PointCollection für die Pfeilspitze (für XAML Binding)
+    public PointCollection ArrowHeadPoints
+    {
+        get
+        {
+            var points = new PointCollection();
+            
+            if (Points.Count < 2 || Type != AnnotationType.Arrow)
+            {
+                return points;
+            }
+
+            Point start = Points[0];
+            Point end = Points[1];
+
+            double dx = end.X - start.X;
+            double dy = end.Y - start.Y;
+            double length = System.Math.Sqrt(dx * dx + dy * dy);
+
+            if (length == 0)
+            {
+                points.Add(end);
+                points.Add(end);
+                points.Add(end);
+                return points;
+            }
+
+            dx /= length;
+            dy /= length;
+
+            double arrowLength = Thickness * 4;
+            double arrowWidth = Thickness * 2;
+
+            double baseX = end.X - dx * arrowLength;
+            double baseY = end.Y - dy * arrowLength;
+
+            // Spitze
+            points.Add(end);
+            
+            // Links
+            double leftX = baseX + dy * arrowWidth;
+            double leftY = baseY - dx * arrowWidth;
+            points.Add(new Point(leftX, leftY));
+            
+            // Rechts
+            double rightX = baseX - dy * arrowWidth;
+            double rightY = baseY + dx * arrowWidth;
+            points.Add(new Point(rightX, rightY));
+
+            return points;
+        }
+    }
+
+    // Berechnet die Punkte für die Pfeilspitze
+    public Point ArrowHeadTip
+    {
+        get
+        {
+            if (Points.Count < 2 || Type != AnnotationType.Arrow)
+                return new Point(0, 0);
+            return Points[1];
+        }
+    }
+
+    public Point ArrowHeadLeft
+    {
+        get
+        {
+            if (Points.Count < 2 || Type != AnnotationType.Arrow)
+                return new Point(0, 0);
+
+            Point start = Points[0];
+            Point end = Points[1];
+
+            double dx = end.X - start.X;
+            double dy = end.Y - start.Y;
+            double length = System.Math.Sqrt(dx * dx + dy * dy);
+
+            if (length == 0)
+                return end;
+
+            dx /= length;
+            dy /= length;
+
+            double arrowLength = Thickness * 4;
+            double arrowWidth = Thickness * 2;
+
+            double baseX = end.X - dx * arrowLength;
+            double baseY = end.Y - dy * arrowLength;
+
+            double leftX = baseX + dy * arrowWidth;
+            double leftY = baseY - dx * arrowWidth;
+
+            return new Point(leftX, leftY);
+        }
+    }
+
+    public Point ArrowHeadRight
+    {
+        get
+        {
+            if (Points.Count < 2 || Type != AnnotationType.Arrow)
+                return new Point(0, 0);
+
+            Point start = Points[0];
+            Point end = Points[1];
+
+            double dx = end.X - start.X;
+            double dy = end.Y - start.Y;
+            double length = System.Math.Sqrt(dx * dx + dy * dy);
+
+            if (length == 0)
+                return end;
+
+            dx /= length;
+            dy /= length;
+
+            double arrowLength = Thickness * 4;
+            double arrowWidth = Thickness * 2;
+
+            double baseX = end.X - dx * arrowLength;
+            double baseY = end.Y - dy * arrowLength;
+
+            double rightX = baseX - dy * arrowWidth;
+            double rightY = baseY + dx * arrowWidth;
+
+            return new Point(rightX, rightY);
+        }
+    }
 
     // Bounding Box für Hit-Testing und Auswahl
     public Rect GetBounds()
