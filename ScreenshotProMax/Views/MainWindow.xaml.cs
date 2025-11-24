@@ -2,8 +2,10 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using ScreenshotProMax.Models;
+using ScreenshotProMax.Services;
 using ScreenshotProMax.ViewModels;
 
 namespace ScreenshotProMax.Views;
@@ -12,12 +14,53 @@ public partial class MainWindow : Window
 {
     private AnnotationModel? _activeAnnotation;
     private bool _isDrawing;
+    private HotkeyService? _hotkeyService;
 
     private MainViewModel ViewModel => (MainViewModel)DataContext;
 
     public MainWindow()
     {
         InitializeComponent();
+        Loaded += MainWindow_Loaded;
+        Closed += MainWindow_Closed;
+    }
+
+    private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+        // Register global hotkey Ctrl+D
+        _hotkeyService = new HotkeyService();
+        var handle = new WindowInteropHelper(this).Handle;
+        
+        if (_hotkeyService.RegisterHotkey(handle, ModifierKeys.Control, Key.D))
+        {
+            _hotkeyService.HotkeyPressed += HotkeyService_HotkeyPressed;
+        }
+        else
+        {
+            MessageBox.Show("Hotkey Strg+D konnte nicht registriert werden.", "Warnung", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
+
+    private void MainWindow_Closed(object? sender, EventArgs e)
+    {
+        _hotkeyService?.Dispose();
+    }
+
+    private async void HotkeyService_HotkeyPressed(object? sender, EventArgs e)
+    {
+        // Minimize window before capture
+        WindowState = WindowState.Minimized;
+        await System.Threading.Tasks.Task.Delay(200);
+
+        // Show region selector
+        await ViewModel.CaptureRegionCommand.ExecuteAsync(null);
+
+        // Restore window if capture was successful
+        if (ViewModel.HasImage)
+        {
+            WindowState = WindowState.Normal;
+            Activate();
+        }
     }
 
     private void OverlayCanvas_MouseDown(object sender, MouseButtonEventArgs e)

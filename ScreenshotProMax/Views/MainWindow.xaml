@@ -7,7 +7,8 @@
         xmlns:models="clr-namespace:ScreenshotProMax.Models"
         xmlns:converters="clr-namespace:ScreenshotProMax.Converters"
         mc:Ignorable="d"
-        Title="ScreenshotProMax" Height="720" Width="1280"
+        Title="ScreenshotProMax" 
+        Height="720" Width="1280"
         Background="#FF0F0F10">
     <Window.Resources>
         <converters:PointsToPointCollectionConverter x:Key="PointsToPointCollectionConverter" />
@@ -28,22 +29,39 @@
         </Grid.RowDefinitions>
 
         <Border Background="{StaticResource SurfaceBrush}" Padding="12" BorderBrush="{StaticResource PanelBorderBrush}" BorderThickness="0 0 0 1">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="8">
-                <Button Style="{StaticResource ToolbarButton}" Content="Bild aufnehmen" Command="{Binding CaptureCommand}" />
-                <Button Style="{StaticResource ToolbarButton}" Content="Speichern" Command="{Binding SaveCommand}" IsEnabled="{Binding HasImage}" />
-                <Button Style="{StaticResource ToolbarButton}" Content="Anmerkungen löschen" Command="{Binding ClearAnnotationsCommand}" IsEnabled="{Binding HasImage}" />
-                <Separator Width="16" />
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="4">
-                    <TextBlock Text="Werkzeug:" Foreground="White" VerticalAlignment="Center" />
-                    <RadioButton Content="Pfeil" GroupName="Tools" Tag="Arrow" IsChecked="True" Checked="ToolRadio_Checked" Foreground="White" />
-                    <RadioButton Content="Linie" GroupName="Tools" Tag="Line" Checked="ToolRadio_Checked" Foreground="White" />
-                    <RadioButton Content="Text" GroupName="Tools" Tag="Text" Checked="ToolRadio_Checked" Foreground="White" />
-                    <RadioButton Content="Nummer" GroupName="Tools" Tag="Number" Checked="ToolRadio_Checked" Foreground="White" />
-                    <RadioButton Content="Freihand" GroupName="Tools" Tag="Pen" Checked="ToolRadio_Checked" Foreground="White" />
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <!-- Capture Buttons -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,8,0">
+                    <TextBlock Text="Aufnahme:" Foreground="White" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="Bold" />
+                    <Button Style="{StaticResource ToolbarButton}" Content="Region (Strg+D)" Command="{Binding CaptureRegionCommand}" ToolTip="Screenshot-Bereich auswählen" />
+                    <Button Style="{StaticResource ToolbarButton}" Content="Fenster" Command="{Binding CaptureActiveWindowCommand}" ToolTip="Aktives Fenster aufnehmen" />
+                    <Button Style="{StaticResource ToolbarButton}" Content="Bildschirm" Command="{Binding CaptureCommand}" ToolTip="Primären Bildschirm aufnehmen" />
+                    <Button Style="{StaticResource ToolbarButton}" Content="Alle Bildschirme" Command="{Binding CaptureAllScreensCommand}" ToolTip="Alle Bildschirme aufnehmen" />
                 </StackPanel>
-                <Separator Width="16" />
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="6">
-                    <TextBlock Text="Farbe" Foreground="White" VerticalAlignment="Center" />
+                
+                <Separator Width="1" Margin="8,0" Background="{StaticResource PanelBorderBrush}" />
+                
+                <!-- File Operations -->
+                <Button Style="{StaticResource ToolbarButton}" Content="Speichern" Command="{Binding SaveCommand}" IsEnabled="{Binding HasImage}" Margin="4,0" />
+                <Button Style="{StaticResource ToolbarButton}" Content="Anmerkungen löschen" Command="{Binding ClearAnnotationsCommand}" IsEnabled="{Binding HasImage}" Margin="4,0" />
+                
+                <Separator Width="1" Margin="8,0" Background="{StaticResource PanelBorderBrush}" />
+                
+                <!-- Tools -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0">
+                    <TextBlock Text="Werkzeug:" Foreground="White" VerticalAlignment="Center" Margin="0,0,4,0" />
+                    <RadioButton Content="Pfeil" GroupName="Tools" Tag="Arrow" IsChecked="True" Checked="ToolRadio_Checked" Foreground="White" Margin="4,0" />
+                    <RadioButton Content="Linie" GroupName="Tools" Tag="Line" Checked="ToolRadio_Checked" Foreground="White" Margin="4,0" />
+                    <RadioButton Content="Text" GroupName="Tools" Tag="Text" Checked="ToolRadio_Checked" Foreground="White" Margin="4,0" />
+                    <RadioButton Content="Nummer" GroupName="Tools" Tag="Number" Checked="ToolRadio_Checked" Foreground="White" Margin="4,0" />
+                    <RadioButton Content="Freihand" GroupName="Tools" Tag="Pen" Checked="ToolRadio_Checked" Foreground="White" Margin="4,0" />
+                </StackPanel>
+                
+                <Separator Width="1" Margin="8,0" Background="{StaticResource PanelBorderBrush}" />
+                
+                <!-- Color -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0">
+                    <TextBlock Text="Farbe" Foreground="White" VerticalAlignment="Center" Margin="0,0,6,0" />
                     <ComboBox Width="120" SelectionChanged="ColorCombo_SelectionChanged" SelectedIndex="0">
                         <ComboBoxItem Content="Rot" Tag="#FFe74c3c" />
                         <ComboBoxItem Content="Gelb" Tag="#FFf1c40f" />
@@ -52,12 +70,16 @@
                         <ComboBoxItem Content="Lila" Tag="#FF8e44ad" />
                     </ComboBox>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="6">
-                    <TextBlock Text="Dicke" Foreground="White" VerticalAlignment="Center" />
+                
+                <!-- Thickness -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0">
+                    <TextBlock Text="Dicke" Foreground="White" VerticalAlignment="Center" Margin="0,0,6,0" />
                     <Slider Width="120" Minimum="1" Maximum="12" Value="{Binding CurrentThickness, Mode=TwoWay}" />
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="6">
-                    <TextBlock Text="Transparenz" Foreground="White" VerticalAlignment="Center" />
+                
+                <!-- Opacity -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0">
+                    <TextBlock Text="Transparenz" Foreground="White" VerticalAlignment="Center" Margin="0,0,6,0" />
                     <Slider Width="120" Minimum="0.2" Maximum="1" Value="{Binding CurrentOpacity, Mode=TwoWay}" />
                 </StackPanel>
             </StackPanel>
@@ -104,9 +126,11 @@
                                         <Polyline.Style>
                                             <Style TargetType="Polyline">
                                                 <Setter Property="Visibility" Value="Collapsed" />
-                                                <DataTrigger Binding="{Binding Type}" Value="Pen">
-                                                    <Setter Property="Visibility" Value="Visible" />
-                                                </DataTrigger>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Type}" Value="Pen">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
                                             </Style>
                                         </Polyline.Style>
                                     </Polyline>

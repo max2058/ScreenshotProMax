@@ -38,6 +38,6 @@ public partial class AnnotationModel : ObservableObject
     [ObservableProperty]
     private double opacity = 0.9;
 
-    public SolidColorBrush StrokeBrush => new(color) { Opacity = opacity };
-    public SolidColorBrush FillBrush => new(color) { Opacity = opacity * 0.8 };
+    public SolidColorBrush StrokeBrush => new(Color) { Opacity = Opacity };
+    public SolidColorBrush FillBrush => new(Color) { Opacity = Opacity * 0.8 };
 }

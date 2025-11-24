@@ -13,7 +13,8 @@ public class ImageExportService
 {
     public Task SaveAsync(string filePath, BitmapSource background, ObservableCollection<AnnotationModel> annotations)
     {
-        return Task.Run(() =>
+        // Render and encode must run on WPF Dispatcher (STA) because we use WPF visual and bitmap classes.
+        return Application.Current.Dispatcher.InvokeAsync(() =>
         {
             var drawingVisual = new DrawingVisual();
             using (var context = drawingVisual.RenderOpen())
@@ -39,7 +40,7 @@ public class ImageExportService
             encoder.Frames.Add(BitmapFrame.Create(rtb));
             using var stream = File.Create(filePath);
             encoder.Save(stream);
-        });
+        }).Task;
     }
 
     private static void DrawAnnotation(DrawingContext context, AnnotationModel annotation)
