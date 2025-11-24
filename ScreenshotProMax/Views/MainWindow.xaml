@@ -9,7 +9,7 @@
         xmlns:models="clr-namespace:ScreenshotProMax.Models"
         xmlns:converters="clr-namespace:ScreenshotProMax.Converters"
         mc:Ignorable="d"
-        Title="ScreenshotProMax" 
+        Title="Screenshot Pro Max" 
         Height="720" Width="1280"
         TitleCharacterCasing="Normal"
         WindowStartupLocation="CenterScreen"
@@ -71,8 +71,8 @@
                             ToolTip="Screenshot-Bereich auswählen (Strg+D)">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="CropFree" Width="16" Height="16" Margin="0,0,4,0"/>
-                            <TextBlock Text="Region"/>
-                        </StackPanel>
+              <TextBlock><Run Language="de-de" Text="Bereich"/></TextBlock>
+            </StackPanel>
                     </Button>
                     <Button Style="{StaticResource ToolbarButton}" 
                             Command="{Binding CaptureActiveWindowCommand}" 
@@ -95,7 +95,7 @@
                             ToolTip="Alle Bildschirme aufnehmen">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="MonitorMultiple" Width="16" Height="16" Margin="0,0,4,0"/>
-                            <TextBlock Text="Alle"/>
+                            <TextBlock Text="Alles"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -109,7 +109,7 @@
                         ToolTip="Screenshot speichern">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconMaterial Kind="ContentSave" Width="16" Height="16" Margin="0,0,4,0"/>
-                        <TextBlock Text="Speichern"/>
+                        <TextBlock Text="Bild speichern"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource ToolbarButton}" 
@@ -118,7 +118,7 @@
                         ToolTip="Alle Anmerkungen löschen">
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconMaterial Kind="DeleteSweep" Width="16" Height="16" Margin="0,0,4,0"/>
-                        <TextBlock Text="Löschen"/>
+                        <TextBlock Text="Anmerkungen Löschen"/>
                     </StackPanel>
                 </Button>
                 
@@ -136,27 +136,32 @@
                                 Tag="Arrow" 
                                 IsChecked="True" 
                                 Checked="ToolRadio_Checked" 
-                                Style="{StaticResource ToolRadioButton}"/>
+                                Style="{StaticResource ToolRadioButton}"
+                                Background="Transparent"/>
                     <RadioButton Content="Linie" 
                                 GroupName="Tools" 
                                 Tag="Line" 
                                 Checked="ToolRadio_Checked" 
-                                Style="{StaticResource ToolRadioButton}"/>
+                                Style="{StaticResource ToolRadioButton}"
+                                 Background="Transparent"/>
                     <RadioButton Content="Text" 
                                 GroupName="Tools" 
                                 Tag="Text" 
                                 Checked="ToolRadio_Checked" 
-                                Style="{StaticResource ToolRadioButton}"/>
+                                Style="{StaticResource ToolRadioButton}"
+                                 Background="Transparent"/>
                     <RadioButton Content="Nummer" 
                                 GroupName="Tools" 
                                 Tag="Number" 
                                 Checked="ToolRadio_Checked" 
-                                Style="{StaticResource ToolRadioButton}"/>
+                                Style="{StaticResource ToolRadioButton}"
+                                 Background="Transparent"/>
                     <RadioButton Content="Freihand" 
                                 GroupName="Tools" 
                                 Tag="Pen" 
                                 Checked="ToolRadio_Checked" 
-                                Style="{StaticResource ToolRadioButton}"/>
+                                Style="{StaticResource ToolRadioButton}"
+                                 Background="Transparent"/>
                 </StackPanel>
                 
                 <Separator Style="{StaticResource Local.VerticalSeparator}" Height="30" />
@@ -180,7 +185,7 @@
                 </StackPanel>
                 
                 <!-- Thickness -->
-                <StackPanel Orientation="Horizontal" Margin="8,0" Width="140">
+                <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Dicke:" 
                                VerticalAlignment="Center" 
                                Margin="0,0,6,0"
@@ -193,7 +198,7 @@
                 </StackPanel>
                 
                 <!-- Opacity -->
-                <StackPanel Orientation="Horizontal" Margin="8,0" Width="150">
+                <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Transparenz:" 
                                VerticalAlignment="Center" 
                                Margin="0,0,6,0"
@@ -201,7 +206,7 @@
                     <Slider Minimum="0.2" 
                            Maximum="1" 
                            Value="{Binding CurrentOpacity, Mode=TwoWay}"
-                           Width="80"
+                           Width="100"
                            Style="{StaticResource MahApps.Styles.Slider}"/>
                 </StackPanel>
             </WrapPanel>
@@ -217,12 +222,12 @@
                           HorizontalAlignment="Center"
                           VerticalAlignment="Center"
                           FontSize="18"
-                          Foreground="{DynamicResource MahApps.Brushes.Gray5}"
+                          Foreground="{DynamicResource MahApps.Brushes.Gray2}"
                           Visibility="{Binding HasImage, Converter={x:Static converters:BooleanToVisibilityConverter.InvertedInstance}}"/>
                 
                 <Image x:Name="ScreenshotImage" 
                       Source="{Binding CapturedImage}" 
-                      Stretch="None" />
+                      Stretch="None"/>
                       
                 <Canvas x:Name="OverlayCanvas" 
                        Background="Transparent"
