@@ -15,6 +15,9 @@ public partial class MainWindow : MetroWindow
 {
     private AnnotationModel? _activeAnnotation;
     private bool _isDrawing;
+    private bool _isDragging;
+    private bool _isResizing;
+    private Point _lastMousePosition;
     private HotkeyService? _hotkeyService;
 
     private MainViewModel ViewModel => (MainViewModel)DataContext;
@@ -85,6 +88,19 @@ public partial class MainWindow : MetroWindow
             ViewModel.RedoCommand.Execute(null);
             e.Handled = true;
         }
+        // Delete-Taste zum Löschen der ausgewählten Annotation
+        else if (e.Key == Key.Delete && ViewModel.SelectedAnnotation != null)
+        {
+            ViewModel.Annotations.Remove(ViewModel.SelectedAnnotation);
+            ViewModel.SelectedAnnotation = null;
+            e.Handled = true;
+        }
+        // Escape zum Abbrechen der Auswahl
+        else if (e.Key == Key.Escape)
+        {
+            ViewModel.DeselectAll();
+            e.Handled = true;
+        }
     }
 
     private void OverlayCanvas_MouseDown(object sender, MouseButtonEventArgs e)
@@ -94,8 +110,46 @@ public partial class MainWindow : MetroWindow
             return;
         }
 
-        _activeAnnotation = ViewModel.BeginAnnotation();
         var position = e.GetPosition(OverlayCanvas);
+
+        // Auswahl-Werkzeug
+        if (ViewModel.CurrentTool == AnnotationType.Selection)
+        {
+            var selected = ViewModel.SelectAnnotationAt(position);
+            if (selected != null)
+            {
+                _isDragging = true;
+                _lastMousePosition = position;
+                
+                // Prüfe ob auf Resize-Handle geklickt wurde
+                var bounds = selected.GetBounds();
+                var handleRect = new Rect(
+                    bounds.Right - 5, 
+                    bounds.Bottom - 5, 
+                    10, 
+                    10
+                );
+                
+                if (handleRect.Contains(position))
+                {
+                    _isResizing = true;
+                    _isDragging = false;
+                    Mouse.Capture(OverlayCanvas);
+                }
+                else
+                {
+                    Mouse.Capture(OverlayCanvas);
+                }
+            }
+            else
+            {
+                ViewModel.DeselectAll();
+            }
+            return;
+        }
+
+        // Normale Zeichenwerkzeuge
+        _activeAnnotation = ViewModel.BeginAnnotation();
         _activeAnnotation.Points.Add(position);
 
         switch (ViewModel.CurrentTool)
@@ -118,12 +172,42 @@ public partial class MainWindow : MetroWindow
 
     private void OverlayCanvas_MouseMove(object sender, MouseEventArgs e)
     {
+        var position = e.GetPosition(OverlayCanvas);
+
+        // Verschieben einer ausgewählten Annotation
+        if (_isDragging && ViewModel.SelectedAnnotation != null)
+        {
+            var offset = position - _lastMousePosition;
+            ViewModel.MoveSelectedAnnotation(offset);
+            _lastMousePosition = position;
+            return;
+        }
+
+        // Skalieren einer ausgewählten Annotation
+        if (_isResizing && ViewModel.SelectedAnnotation != null)
+        {
+            var bounds = ViewModel.SelectedAnnotation.GetBounds();
+            var center = new Point(bounds.Left + bounds.Width / 2, bounds.Top + bounds.Height / 2);
+            
+            var oldDistance = (_lastMousePosition - center).Length;
+            var newDistance = (position - center).Length;
+            
+            if (oldDistance > 0)
+            {
+                var scaleFactor = newDistance / oldDistance;
+                ViewModel.ScaleSelectedAnnotation(scaleFactor, center);
+            }
+            
+            _lastMousePosition = position;
+            return;
+        }
+
+        // Normales Zeichnen
         if (!_isDrawing || _activeAnnotation == null)
         {
             return;
         }
 
-        var position = e.GetPosition(OverlayCanvas);
         switch (ViewModel.CurrentTool)
         {
             case AnnotationType.Line:
@@ -139,7 +223,10 @@ public partial class MainWindow : MetroWindow
     private void OverlayCanvas_MouseUp(object sender, MouseButtonEventArgs e)
     {
         _isDrawing = false;
+        _isDragging = false;
+        _isResizing = false;
         _activeAnnotation = null;
+        Mouse.Capture(null);
     }
 
     private void OverlayCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -164,6 +251,12 @@ public partial class MainWindow : MetroWindow
         if (sender is RadioButton radio && radio.Tag is string tag && Enum.TryParse<AnnotationType>(tag, out var tool))
         {
             ViewModel.CurrentTool = tool;
+            
+            // Deselektiere beim Wechsel zu einem Zeichenwerkzeug
+            if (tool != AnnotationType.Selection)
+            {
+                ViewModel.DeselectAll();
+            }
         }
     }
 }

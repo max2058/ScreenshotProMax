@@ -196,6 +196,13 @@
               Checked="ToolRadio_Checked" 
               Style="{StaticResource ToolRadioButton}"
               Background="Transparent"/>
+          <RadioButton Content="Auswahl" 
+              GroupName="Tools" 
+              Tag="Selection" 
+              Checked="ToolRadio_Checked" 
+              Style="{StaticResource ToolRadioButton}"
+              Background="Transparent"
+              ToolTip="Anmerkungen auswählen, verschieben und skalieren"/>
         </StackPanel>
 
         <Separator Style="{StaticResource Local.VerticalSeparator}" Foreground="Black" 
@@ -320,13 +327,13 @@
                 <ItemsControl.ItemTemplate>
                   <DataTemplate DataType="{x:Type models:AnnotationModel}">
                     <Canvas>
-                      <!-- Line/Arrow -->
+                      <!-- Line/Arrow mit Auswahl-Highlight -->
                       <Line Stroke="{Binding StrokeBrush}" 
-                                                 StrokeThickness="{Binding Thickness}" 
-                                                 X1="{Binding Points[0].X}" 
-                                                 Y1="{Binding Points[0].Y}" 
-                                                 X2="{Binding Points[1].X}" 
-                                                 Y2="{Binding Points[1].Y}">
+                            StrokeThickness="{Binding Thickness}" 
+                            X1="{Binding Points[0].X}" 
+                            Y1="{Binding Points[0].Y}" 
+                            X2="{Binding Points[1].X}" 
+                            Y2="{Binding Points[1].Y}">
                         <Line.Style>
                           <Style TargetType="Line">
                             <Setter Property="Visibility" Value="Collapsed" />
@@ -345,15 +352,49 @@
                           </Style>
                         </Line.Style>
                       </Line>
+                      
+                      <!-- Auswahl-Highlight für Linien/Pfeile -->
+                      <Line Stroke="DodgerBlue" 
+                            StrokeThickness="8" 
+                            Opacity="0.3"
+                            X1="{Binding Points[0].X}" 
+                            Y1="{Binding Points[0].Y}" 
+                            X2="{Binding Points[1].X}" 
+                            Y2="{Binding Points[1].Y}"
+                            StrokeStartLineCap="Round"
+                            StrokeEndLineCap="Round">
+                        <Line.Style>
+                          <Style TargetType="Line">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                              <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                  <Condition Binding="{Binding IsSelected}" Value="True"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Visibility" Value="Visible" />
+                              </MultiDataTrigger>
+                              <DataTrigger Binding="{Binding Type}" Value="Number">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                              </DataTrigger>
+                              <DataTrigger Binding="{Binding Type}" Value="Text">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                              </DataTrigger>
+                            </Style.Triggers>
+                          </Style>
+                        </Line.Style>
+                      </Line>
 
                       <!-- Number Badge -->
                       <Border Background="{Binding FillBrush}" 
-                                                   BorderBrush="White" 
-                                                   BorderThickness="2" 
-                                                   CornerRadius="16"
-                                                   Padding="8,4"
-                                                   Canvas.Left="{Binding Points[0].X}"
-                                                   Canvas.Top="{Binding Points[0].Y}">
+                              BorderBrush="White" 
+                              BorderThickness="2" 
+                              CornerRadius="16"
+                              Padding="8,4"
+                              Canvas.Left="{Binding Points[0].X}"
+                              Canvas.Top="{Binding Points[0].Y}">
+                        <Border.RenderTransform>
+                          <ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}" />
+                        </Border.RenderTransform>
                         <Border.Style>
                           <Style TargetType="Border">
                             <Setter Property="Visibility" Value="Collapsed" />
@@ -361,24 +402,35 @@
                               <DataTrigger Binding="{Binding Type}" Value="Number">
                                 <Setter Property="Visibility" Value="Visible" />
                               </DataTrigger>
+                              <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                  <Condition Binding="{Binding Type}" Value="Number"/>
+                                  <Condition Binding="{Binding IsSelected}" Value="True"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="BorderBrush" Value="DodgerBlue"/>
+                                <Setter Property="BorderThickness" Value="3"/>
+                              </MultiDataTrigger>
                             </Style.Triggers>
                           </Style>
                         </Border.Style>
                         <TextBlock Text="{Binding Text}" 
-                                                          Foreground="White" 
-                                                          FontWeight="Bold"
-                                                          FontSize="14"/>
+                                   Foreground="White" 
+                                   FontWeight="Bold"
+                                   FontSize="14"/>
                       </Border>
 
                       <!-- Text Label - Editable -->
                       <Border Background="{Binding FillBrush}" 
-                                                   BorderBrush="White" 
-                                                   BorderThickness="2" 
-                                                   CornerRadius="4"
-                                                   Padding="8,4"
-                                                   MinWidth="80"
-                                                   Canvas.Left="{Binding Points[0].X}"
-                                                   Canvas.Top="{Binding Points[0].Y}">
+                              BorderBrush="White" 
+                              BorderThickness="2" 
+                              CornerRadius="4"
+                              Padding="8,4"
+                              MinWidth="80"
+                              Canvas.Left="{Binding Points[0].X}"
+                              Canvas.Top="{Binding Points[0].Y}">
+                        <Border.RenderTransform>
+                          <ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}" />
+                        </Border.RenderTransform>
                         <Border.Style>
                           <Style TargetType="Border">
                             <Setter Property="Visibility" Value="Collapsed" />
@@ -386,18 +438,26 @@
                               <DataTrigger Binding="{Binding Type}" Value="Text">
                                 <Setter Property="Visibility" Value="Visible" />
                               </DataTrigger>
+                              <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                  <Condition Binding="{Binding Type}" Value="Text"/>
+                                  <Condition Binding="{Binding IsSelected}" Value="True"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="BorderBrush" Value="DodgerBlue"/>
+                                <Setter Property="BorderThickness" Value="3"/>
+                              </MultiDataTrigger>
                             </Style.Triggers>
                           </Style>
                         </Border.Style>
                         <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" 
-                                                        Foreground="White" 
-                                                        FontSize="16"
-                                                        FontWeight="SemiBold"
-                                                        Background="Transparent"
-                                                        BorderThickness="0"
-                                                        CaretBrush="White"
-                                                        SelectionBrush="#80FFFFFF"
-                                                        MinWidth="60"/>
+                                 Foreground="White" 
+                                 FontSize="16"
+                                 FontWeight="SemiBold"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 CaretBrush="White"
+                                 SelectionBrush="#80FFFFFF"
+                                 MinWidth="60"/>
                       </Border>
                     </Canvas>
                   </DataTemplate>

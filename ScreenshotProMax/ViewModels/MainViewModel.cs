@@ -63,6 +63,9 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private double zoomLevel;
 
+    [ObservableProperty]
+    private AnnotationModel? selectedAnnotation;
+
     public bool HasImage => CapturedImage != null;
     public bool CanUndo => _undoStack.Count > 0;
     public bool CanRedo => _redoStack.Count > 0;
@@ -193,6 +196,9 @@ public partial class MainViewModel : ObservableObject
 
     public AnnotationModel BeginAnnotation()
     {
+        // Deselektiere alle vorherigen Anmerkungen
+        DeselectAll();
+
         var annotation = new AnnotationModel
         {
             Type = CurrentTool,
@@ -234,6 +240,72 @@ public partial class MainViewModel : ObservableObject
         RedoCommand.NotifyCanExecuteChanged();
         
         return annotation;
+    }
+
+    public void DeselectAll()
+    {
+        foreach (var annotation in Annotations)
+        {
+            annotation.IsSelected = false;
+        }
+        SelectedAnnotation = null;
+    }
+
+    public AnnotationModel? SelectAnnotationAt(Point point)
+    {
+        // Deselektiere vorherige Auswahl
+        DeselectAll();
+
+        // Suche von hinten nach vorne (neueste Anmerkungen zuerst)
+        for (int i = Annotations.Count - 1; i >= 0; i--)
+        {
+            var annotation = Annotations[i];
+            if (annotation.HitTest(point))
+            {
+                annotation.IsSelected = true;
+                SelectedAnnotation = annotation;
+                return annotation;
+            }
+        }
+
+        return null;
+    }
+
+    public void MoveSelectedAnnotation(Vector offset)
+    {
+        if (SelectedAnnotation == null) return;
+
+        for (int i = 0; i < SelectedAnnotation.Points.Count; i++)
+        {
+            SelectedAnnotation.Points[i] = new Point(
+                SelectedAnnotation.Points[i].X + offset.X,
+                SelectedAnnotation.Points[i].Y + offset.Y
+            );
+        }
+    }
+
+    public void ScaleSelectedAnnotation(double scaleFactor, Point center)
+    {
+        if (SelectedAnnotation == null) return;
+
+        // Aktualisiere Scale-Eigenschaft
+        SelectedAnnotation.Scale *= scaleFactor;
+
+        // Skaliere Punkte relativ zum Zentrum
+        for (int i = 0; i < SelectedAnnotation.Points.Count; i++)
+        {
+            var point = SelectedAnnotation.Points[i];
+            var dx = point.X - center.X;
+            var dy = point.Y - center.Y;
+            
+            SelectedAnnotation.Points[i] = new Point(
+                center.X + dx * scaleFactor,
+                center.Y + dy * scaleFactor
+            );
+        }
+
+        // Skaliere auch die Thickness
+        SelectedAnnotation.Thickness *= scaleFactor;
     }
 
     public void ResetAnnotations()
