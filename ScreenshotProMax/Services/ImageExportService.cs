@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ScreenshotProMax.Models;
+using System; // für Math
 
 namespace ScreenshotProMax.Services;
 
@@ -106,14 +107,36 @@ public class ImageExportService
 
     private static void DrawNumber(DrawingContext context, AnnotationModel annotation)
     {
-        var origin = annotation.Points[0];
-        var size = 28 + annotation.Text.Length * 2;
+        // Punkt wird als Top-Left des Kreises/Labels interpretiert (wie im UI Border)
+        var topLeft = annotation.Points[0];
+
+        // Text formatieren (im UI: FontSize=14, Bold, weiß)
+        var formatted = new FormattedText(
+            annotation.Text,
+            System.Globalization.CultureInfo.CurrentUICulture,
+            FlowDirection.LeftToRight,
+            new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, FontWeights.Bold, FontStretches.Normal),
+            14,
+            Brushes.White,
+            1.25);
+
+        double paddingX = 8; // entspricht Border Padding
+        double paddingY = 4;
+        double diameter = Math.Max(formatted.Width + paddingX * 2, formatted.Height + paddingY * 2);
+
+        // Hintergrund (Kreis)
         var background = new SolidColorBrush(annotation.Color)
         {
             Opacity = annotation.Opacity * 0.9
         };
-        var border = new Pen(Brushes.White, 1.5);
-        context.DrawEllipse(background, border, origin, size / 2, size / 2);
-        DrawText(context, annotation.Text, annotation);
+        var borderPen = new Pen(Brushes.White, 2);
+
+        var center = new Point(topLeft.X + diameter / 2, topLeft.Y + diameter / 2);
+        context.DrawEllipse(background, borderPen, center, diameter / 2, diameter / 2);
+
+        // Text zentrieren (DrawText erwartet oben-links des Text-Bounds, nicht Mittelpunkt)
+        double textX = topLeft.X + (diameter - formatted.Width) / 2;
+        double textY = topLeft.Y + (diameter - formatted.Height) / 2; // ausreichend nah zur Mitte
+        context.DrawText(formatted, new Point(textX, textY));
     }
 }
