@@ -15,20 +15,7 @@ public class ImageExportService
     {
         return Application.Current.Dispatcher.InvokeAsync(() =>
         {
-            var drawingVisual = new DrawingVisual();
-            using (var context = drawingVisual.RenderOpen())
-            {
-                var rect = new Rect(0, 0, background.PixelWidth, background.PixelHeight);
-                context.DrawImage(background, rect);
-
-                foreach (var annotation in annotations)
-                {
-                    DrawAnnotation(context, annotation); // kein Offset mehr
-                }
-            }
-
-            var rtb = new RenderTargetBitmap(background.PixelWidth, background.PixelHeight, background.DpiX, background.DpiY, PixelFormats.Pbgra32);
-            rtb.Render(drawingVisual);
+            var bitmap = CreateAnnotatedBitmap(background, annotations);
 
             BitmapEncoder encoder = Path.GetExtension(filePath).ToLowerInvariant() switch
             {
@@ -36,10 +23,29 @@ public class ImageExportService
                 _ => new PngBitmapEncoder()
             };
 
-            encoder.Frames.Add(BitmapFrame.Create(rtb));
+            encoder.Frames.Add(BitmapFrame.Create(bitmap));
             using var stream = File.Create(filePath);
             encoder.Save(stream);
         }).Task;
+    }
+
+    public BitmapSource CreateAnnotatedBitmap(BitmapSource background, ObservableCollection<AnnotationModel> annotations)
+    {
+        var drawingVisual = new DrawingVisual();
+        using (var context = drawingVisual.RenderOpen())
+        {
+            var rect = new Rect(0, 0, background.PixelWidth, background.PixelHeight);
+            context.DrawImage(background, rect);
+
+            foreach (var annotation in annotations)
+            {
+                DrawAnnotation(context, annotation);
+            }
+        }
+
+        var rtb = new RenderTargetBitmap(background.PixelWidth, background.PixelHeight, background.DpiX, background.DpiY, PixelFormats.Pbgra32);
+        rtb.Render(drawingVisual);
+        return rtb;
     }
 
     private static void DrawAnnotation(DrawingContext context, AnnotationModel annotation)

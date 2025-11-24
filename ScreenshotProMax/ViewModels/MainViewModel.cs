@@ -9,6 +9,9 @@ using ScreenshotProMax.Models;
 using ScreenshotProMax.Services;
 using System.Windows;
 using ScreenshotProMax.Views;
+using System.Collections.Generic;
+using System.Linq;
+using System;
 
 namespace ScreenshotProMax.ViewModels;
 
@@ -16,6 +19,9 @@ public partial class MainViewModel : ObservableObject
 {
     private readonly ScreenshotService _screenshotService;
     private readonly ImageExportService _exportService;
+    private readonly Stack<AnnotationModel> _undoStack = new();
+    private readonly Stack<AnnotationModel> _redoStack = new();
+    private const int MaxUndoSteps = 10;
 
     public MainViewModel()
     {
@@ -25,6 +31,7 @@ public partial class MainViewModel : ObservableObject
         CurrentColor = Colors.Red;
         CurrentThickness = 3;
         CurrentOpacity = 0.9;
+        ZoomLevel = 1.0;
     }
 
     [ObservableProperty]
@@ -53,13 +60,19 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private int nextNumber = 1;
 
+    [ObservableProperty]
+    private double zoomLevel;
+
     public bool HasImage => CapturedImage != null;
+    public bool CanUndo => _undoStack.Count > 0;
+    public bool CanRedo => _redoStack.Count > 0;
 
     partial void OnCapturedImageChanged(BitmapSource? oldValue, BitmapSource? newValue)
     {
         OnPropertyChanged(nameof(HasImage));
         SaveCommand.NotifyCanExecuteChanged();
         ClearAnnotationsCommand.NotifyCanExecuteChanged();
+        CopyToClipboardCommand.NotifyCanExecuteChanged();
     }
 
     [RelayCommand]
@@ -118,6 +131,66 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    [RelayCommand(CanExecute = nameof(HasImage))]
+    private async Task CopyToClipboardAsync()
+    {
+        if (CapturedImage == null) return;
+
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+            var bitmap = _exportService.CreateAnnotatedBitmap(CapturedImage, Annotations);
+            Clipboard.SetImage(bitmap);
+        });
+    }
+
+    [RelayCommand(CanExecute = nameof(CanUndo))]
+    private void Undo()
+    {
+        if (_undoStack.Count == 0) return;
+
+        var annotation = _undoStack.Pop();
+        _redoStack.Push(annotation);
+        Annotations.Remove(annotation);
+
+        // Nummerierung anpassen
+        if (annotation.Type == AnnotationType.Number)
+        {
+            NextNumber = Annotations.Where(a => a.Type == AnnotationType.Number)
+                                   .Select(a => a.Number)
+                                   .DefaultIfEmpty(0)
+                                   .Max() + 1;
+        }
+
+        OnPropertyChanged(nameof(CanUndo));
+        OnPropertyChanged(nameof(CanRedo));
+        UndoCommand.NotifyCanExecuteChanged();
+        RedoCommand.NotifyCanExecuteChanged();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanRedo))]
+    private void Redo()
+    {
+        if (_redoStack.Count == 0) return;
+
+        var annotation = _redoStack.Pop();
+        _undoStack.Push(annotation);
+        Annotations.Add(annotation);
+
+        // Nummerierung anpassen
+        if (annotation.Type == AnnotationType.Number)
+        {
+            NextNumber = Annotations.Where(a => a.Type == AnnotationType.Number)
+                                   .Select(a => a.Number)
+                                   .DefaultIfEmpty(0)
+                                   .Max() + 1;
+        }
+
+        OnPropertyChanged(nameof(CanUndo));
+        OnPropertyChanged(nameof(CanRedo));
+        UndoCommand.NotifyCanExecuteChanged();
+        RedoCommand.NotifyCanExecuteChanged();
+    }
+
     public AnnotationModel BeginAnnotation()
     {
         var annotation = new AnnotationModel
@@ -139,12 +212,61 @@ public partial class MainViewModel : ObservableObject
         }
 
         Annotations.Add(annotation);
+        
+        // Add to undo stack
+        _undoStack.Push(annotation);
+        if (_undoStack.Count > MaxUndoSteps)
+        {
+            var items = _undoStack.ToList();
+            _undoStack.Clear();
+            for (int i = items.Count - MaxUndoSteps; i < items.Count; i++)
+            {
+                _undoStack.Push(items[i]);
+            }
+        }
+        
+        // Clear redo stack when new annotation is added
+        _redoStack.Clear();
+        
+        OnPropertyChanged(nameof(CanUndo));
+        OnPropertyChanged(nameof(CanRedo));
+        UndoCommand.NotifyCanExecuteChanged();
+        RedoCommand.NotifyCanExecuteChanged();
+        
         return annotation;
     }
 
     public void ResetAnnotations()
     {
         Annotations.Clear();
+        _undoStack.Clear();
+        _redoStack.Clear();
         NextNumber = 1;
+        
+        OnPropertyChanged(nameof(CanUndo));
+        OnPropertyChanged(nameof(CanRedo));
+        UndoCommand.NotifyCanExecuteChanged();
+        RedoCommand.NotifyCanExecuteChanged();
+    }
+
+    public void IncreaseZoom()
+    {
+        if (ZoomLevel < 5.0) // Max 500%
+        {
+            ZoomLevel = Math.Min(5.0, ZoomLevel + 0.1);
+        }
+    }
+
+    public void DecreaseZoom()
+    {
+        if (ZoomLevel > 0.1) // Min 10%
+        {
+            ZoomLevel = Math.Max(0.1, ZoomLevel - 0.1);
+        }
+    }
+
+    public void ResetZoom()
+    {
+        ZoomLevel = 1.0;
     }
 }

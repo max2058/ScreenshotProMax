@@ -24,6 +24,7 @@ public partial class MainWindow : MetroWindow
         InitializeComponent();
         Loaded += MainWindow_Loaded; 
         Closed += MainWindow_Closed;
+        PreviewKeyDown += MainWindow_PreviewKeyDown;
     }
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -61,6 +62,28 @@ public partial class MainWindow : MetroWindow
         {
             WindowState = WindowState.Normal;
             Activate();
+        }
+    }
+
+    private async void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        // Strg+C für Copy to Clipboard
+        if (e.Key == Key.C && Keyboard.Modifiers == ModifierKeys.Control && ViewModel.HasImage)
+        {
+            await ViewModel.CopyToClipboardCommand.ExecuteAsync(null);
+            e.Handled = true;
+        }
+        // Strg+Z für Undo
+        else if (e.Key == Key.Z && Keyboard.Modifiers == ModifierKeys.Control && ViewModel.CanUndo)
+        {
+            ViewModel.UndoCommand.Execute(null);
+            e.Handled = true;
+        }
+        // Strg+Y für Redo
+        else if (e.Key == Key.Y && Keyboard.Modifiers == ModifierKeys.Control && ViewModel.CanRedo)
+        {
+            ViewModel.RedoCommand.Execute(null);
+            e.Handled = true;
         }
     }
 
@@ -117,6 +140,23 @@ public partial class MainWindow : MetroWindow
     {
         _isDrawing = false;
         _activeAnnotation = null;
+    }
+
+    private void OverlayCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        // Nur zoomen wenn Strg gedrückt ist
+        if (Keyboard.Modifiers == ModifierKeys.Control && ViewModel.HasImage)
+        {
+            if (e.Delta > 0)
+            {
+                ViewModel.IncreaseZoom();
+            }
+            else
+            {
+                ViewModel.DecreaseZoom();
+            }
+            e.Handled = true;
+        }
     }
 
     private void ToolRadio_Checked(object sender, RoutedEventArgs e)

@@ -114,6 +114,40 @@
           </StackPanel>
         </Button>
         <Button Style="{StaticResource ToolbarButton}" 
+                        Command="{Binding CopyToClipboardCommand}" 
+                        IsEnabled="{Binding HasImage}"
+                        ToolTip="In Zwischenablage kopieren (Strg+C)">
+          <StackPanel Orientation="Horizontal">
+            <iconPacks:PackIconMaterial Kind="ContentCopy" Width="16" Height="16" Margin="0,0,4,0"/>
+            <TextBlock Text="Kopieren"/>
+          </StackPanel>
+        </Button>
+
+        <Separator Style="{StaticResource Local.VerticalSeparator}" Foreground="Black" 
+         Height="30" Width="30" Background="Black"/>
+
+        <!-- Undo/Redo -->
+        <Button Style="{StaticResource ToolbarButton}" 
+                        Command="{Binding UndoCommand}" 
+                        ToolTip="Rückgängig (bis zu 10 Schritte)">
+          <StackPanel Orientation="Horizontal">
+            <iconPacks:PackIconMaterial Kind="Undo" Width="16" Height="16" Margin="0,0,4,0"/>
+            <TextBlock Text="Undo"/>
+          </StackPanel>
+        </Button>
+        <Button Style="{StaticResource ToolbarButton}" 
+                        Command="{Binding RedoCommand}" 
+                        ToolTip="Wiederherstellen">
+          <StackPanel Orientation="Horizontal">
+            <iconPacks:PackIconMaterial Kind="Redo" Width="16" Height="16" Margin="0,0,4,0"/>
+            <TextBlock Text="Redo"/>
+          </StackPanel>
+        </Button>
+
+        <Separator Style="{StaticResource Local.VerticalSeparator}" Foreground="Black" 
+         Height="30" Width="30" Background="Black"/>
+        
+        <Button Style="{StaticResource ToolbarButton}" 
                         Command="{Binding ClearAnnotationsCommand}" 
                         IsEnabled="{Binding HasImage}"
                         ToolTip="Alle Anmerkungen löschen">
@@ -217,6 +251,26 @@
           </TextBlock>
         </StackPanel>
 
+        <Separator Style="{StaticResource Local.VerticalSeparator}" Foreground="Black" 
+         Height="30" Width="30" Background="Black"/>
+
+        <!-- Zoom -->
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Zoom:" 
+             VerticalAlignment="Center" 
+             Margin="0,0,6,0"
+             FontSize="13"/>
+          <TextBlock Text="{Binding ZoomLevel, StringFormat='{}{0:P0}'}"
+             VerticalAlignment="Center"
+             Margin="0,0,8,0"
+             FontSize="13"
+             MinWidth="45"/>
+          <TextBlock Text="(Strg+Mausrad)"
+             VerticalAlignment="Center"
+             FontSize="11"
+             Foreground="{DynamicResource MahApps.Brushes.Gray2}"/>
+        </StackPanel>
+
       </WrapPanel>
     </Border>
 
@@ -240,7 +294,11 @@
                         Padding="0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Visibility="{Binding HasImage, Converter={x:Static converters:BooleanToVisibilityConverter.Instance}}">
+                        Visibility="{Binding HasImage, Converter={x:Static converters:BooleanToVisibilityConverter.Instance}}"
+                        RenderTransformOrigin="0.5,0.5">
+          <Border.RenderTransform>
+            <ScaleTransform ScaleX="{Binding ZoomLevel}" ScaleY="{Binding ZoomLevel}"/>
+          </Border.RenderTransform>
           <Grid>
             <Image x:Name="ScreenshotImage"
                                Source="{Binding CapturedImage}"
@@ -251,7 +309,8 @@
                                 Height="{Binding ElementName=ScreenshotImage, Path=ActualHeight}"
                                 MouseDown="OverlayCanvas_MouseDown"
                                 MouseMove="OverlayCanvas_MouseMove"
-                                MouseUp="OverlayCanvas_MouseUp">
+                                MouseUp="OverlayCanvas_MouseUp"
+                                MouseWheel="OverlayCanvas_MouseWheel">
               <ItemsControl ItemsSource="{Binding Annotations}">
                 <ItemsControl.ItemsPanel>
                   <ItemsPanelTemplate>
