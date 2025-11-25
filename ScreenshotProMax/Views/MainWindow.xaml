@@ -49,8 +49,8 @@
 
   <Grid>
     <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
+      <RowDefinition Height="50"/>
+      <RowDefinition Height="40"/>
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
 
@@ -59,58 +59,50 @@
                 Background="{DynamicResource MahApps.Brushes.Accent4}" 
                 BorderBrush="{DynamicResource MahApps.Brushes.Accent}" 
                 BorderThickness="0,2,0,2">
-      <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
+      <WrapPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
         <!-- Capture Buttons -->
         <StackPanel Orientation="Horizontal">
-          <TextBlock Text="📸 Aufnahme:" 
-                               VerticalAlignment="Center" 
-                               FontWeight="SemiBold"
-                               FontSize="14"/>
-          <Button Style="{StaticResource ToolbarButton}" 
-                            Command="{Binding CaptureRegionCommand}" 
-                            ToolTip="Screenshot-Bereich auswählen (Strg+D)">
+
+          <Button Style="{StaticResource ToolbarButton}"
+                  Command="{Binding CaptureRegionCommand}" 
+                  ToolTip="Screenshot-Bereich auswählen (Strg+D)">
             <StackPanel Orientation="Horizontal">
-              <iconPacks:PackIconMaterial Kind="CropFree" Width="16" Height="16" Margin="0,0,4,0"/>
-              <TextBlock><Run Language="de-de" Text="Bereich"/></TextBlock>
+              <iconPacks:PackIconMaterial Kind="CropFree"/>
             </StackPanel>
           </Button>
           <Button Style="{StaticResource ToolbarButton}" 
                             Command="{Binding CaptureActiveWindowCommand}" 
                             ToolTip="Aktives Fenster aufnehmen">
             <StackPanel Orientation="Horizontal">
-              <iconPacks:PackIconMaterial Kind="WindowMaximize" Width="16" Height="16" Margin="0,0,4,0"/>
-              <TextBlock Text="Fenster"/>
+              <iconPacks:PackIconMaterial Kind="WindowMaximize"/>
             </StackPanel>
           </Button>
           <Button Style="{StaticResource ToolbarButton}" 
                             Command="{Binding CaptureCommand}" 
                             ToolTip="Primären Bildschirm aufnehmen">
             <StackPanel Orientation="Horizontal">
-              <iconPacks:PackIconMaterial Kind="Monitor" Width="16" Height="16" Margin="0,0,4,0"/>
-              <TextBlock Text="Bildschirm"/>
+              <iconPacks:PackIconMaterial Kind="Monitor"/>
             </StackPanel>
           </Button>
           <Button Style="{StaticResource ToolbarButton}" 
                             Command="{Binding CaptureAllScreensCommand}" 
                             ToolTip="Alle Bildschirme aufnehmen">
             <StackPanel Orientation="Horizontal">
-              <iconPacks:PackIconMaterial Kind="MonitorMultiple" Width="16" Height="16" Margin="0,0,4,0"/>
-              <TextBlock Text="Alles"/>
+              <iconPacks:PackIconMaterial Kind="MonitorMultiple"/>
             </StackPanel>
           </Button>
         </StackPanel>
 
         <Separator Style="{StaticResource Local.VerticalSeparator}" Foreground="Black" 
          Height="30" Width="30" Background="Black"/>
-        
+
         <!-- File Operations -->
         <Button Style="{StaticResource ToolbarButton}" 
                         Command="{Binding SaveCommand}" 
                         IsEnabled="{Binding HasImage}"
                         ToolTip="Screenshot speichern">
           <StackPanel Orientation="Horizontal">
-            <iconPacks:PackIconMaterial Kind="ContentSave" Width="16" Height="16" Margin="0,0,4,0"/>
-            <TextBlock Text="Bild speichern"/>
+            <iconPacks:PackIconMaterial Kind="ContentSave"/>
           </StackPanel>
         </Button>
         <Button Style="{StaticResource ToolbarButton}" 
@@ -118,8 +110,7 @@
                         IsEnabled="{Binding HasImage}"
                         ToolTip="In Zwischenablage kopieren (Strg+C)">
           <StackPanel Orientation="Horizontal">
-            <iconPacks:PackIconMaterial Kind="ContentCopy" Width="16" Height="16" Margin="0,0,4,0"/>
-            <TextBlock Text="Kopieren"/>
+            <iconPacks:PackIconMaterial Kind="ContentCopy"/>
           </StackPanel>
         </Button>
 
@@ -128,32 +119,32 @@
 
         <!-- Undo/Redo -->
         <Button Style="{StaticResource ToolbarButton}" 
+                        Background="Transparent"
                         Command="{Binding UndoCommand}" 
                         ToolTip="Rückgängig (bis zu 10 Schritte)">
           <StackPanel Orientation="Horizontal">
-            <iconPacks:PackIconMaterial Kind="Undo" Width="16" Height="16" Margin="0,0,4,0"/>
-            <TextBlock Text="Undo"/>
+            <iconPacks:PackIconMaterial Kind="Undo"/>
           </StackPanel>
         </Button>
         <Button Style="{StaticResource ToolbarButton}" 
+                Background="Transparent"
                         Command="{Binding RedoCommand}" 
                         ToolTip="Wiederherstellen">
           <StackPanel Orientation="Horizontal">
-            <iconPacks:PackIconMaterial Kind="Redo" Width="16" Height="16" Margin="0,0,4,0"/>
-            <TextBlock Text="Redo"/>
+            <iconPacks:PackIconMaterial Kind="Redo"/>
           </StackPanel>
         </Button>
 
         <Separator Style="{StaticResource Local.VerticalSeparator}" Foreground="Black" 
          Height="30" Width="30" Background="Black"/>
-        
-        <Button Style="{StaticResource ToolbarButton}" 
+
+        <Button Style="{StaticResource ToolbarButton}"
+                                Background="Transparent"
                         Command="{Binding ClearAnnotationsCommand}" 
                         IsEnabled="{Binding HasImage}"
                         ToolTip="Alle Anmerkungen löschen">
           <StackPanel Orientation="Horizontal">
-            <iconPacks:PackIconMaterial Kind="DeleteSweep" Width="16" Height="16" Margin="0,0,4,0"/>
-            <TextBlock Text="Anmerkungen Löschen"/>
+            <iconPacks:PackIconMaterial Kind="DeleteSweep"/>
           </StackPanel>
         </Button>
 
@@ -164,63 +155,67 @@
       Background="{DynamicResource MahApps.Brushes.Accent4}" 
       BorderBrush="{DynamicResource MahApps.Brushes.Accent}" 
       BorderThickness="0,0,0,2">
-      <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
+      <WrapPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
         <!-- Tools -->
         <StackPanel Orientation="Horizontal" Margin="8,0">
-          <TextBlock Text="🎨 Werkzeug:" 
-             VerticalAlignment="Center" 
-             FontWeight="SemiBold"
-             FontSize="14"/>
-          <RadioButton Content="Pfeil" 
+          <RadioButton 
               x:Name="ArrowRadio"
               GroupName="Tools" 
               Tag="Arrow" 
               Checked="ToolRadio_Checked" 
               Style="{StaticResource ToolRadioButton}"
-              Background="Transparent"/>
-          <RadioButton Content="Linie" 
+              Background="Transparent">
+            <iconPacks:PackIconMaterial Kind="ArrowTopRight"/>
+          </RadioButton>
+          <RadioButton 
               GroupName="Tools" 
               Tag="Line" 
               Checked="ToolRadio_Checked" 
               Style="{StaticResource ToolRadioButton}"
-              Background="Transparent"/>
-          <RadioButton Content="Text" 
+              Background="Transparent">
+            <iconPacks:PackIconMaterial Kind="ChartTimelineVariant" />
+          </RadioButton>
+          <RadioButton 
               GroupName="Tools" 
               Tag="Text" 
               Checked="ToolRadio_Checked" 
               Style="{StaticResource ToolRadioButton}"
-              Background="Transparent"/>
-          <RadioButton Content="Nummer" 
+              Background="Transparent">
+            <iconPacks:PackIconMaterial Kind="FormatTextbox" />
+          </RadioButton>
+          <RadioButton
               GroupName="Tools" 
               Tag="Number" 
               Checked="ToolRadio_Checked" 
               Style="{StaticResource ToolRadioButton}"
-              Background="Transparent"/>
-          <RadioButton Content="Auswahl" 
+              Background="Transparent">
+            <iconPacks:PackIconMaterial Kind="Numeric1CircleOutline" />
+          </RadioButton>
+          <RadioButton 
               GroupName="Tools" 
               Tag="Selection" 
               Checked="ToolRadio_Checked" 
               Style="{StaticResource ToolRadioButton}"
               Background="Transparent"
-              ToolTip="Anmerkungen auswählen, verschieben und skalieren"/>
-          <RadioButton Content="Radierer" 
+              ToolTip="Anmerkungen auswählen, verschieben und skalieren">
+            <iconPacks:PackIconMaterial Kind="CursorDefaultOutline" />
+          </RadioButton>
+          <RadioButton
               GroupName="Tools" 
               Tag="Eraser" 
               Checked="ToolRadio_Checked" 
               Style="{StaticResource ToolRadioButton}"
               Background="Transparent"
-              ToolTip="Anmerkungen durch Überfahren löschen"/>
+              ToolTip="Anmerkungen durch Überfahren löschen">
+            <iconPacks:PackIconMaterial Kind="Eraser" />
+          </RadioButton>
         </StackPanel>
 
         <Separator Style="{StaticResource Local.VerticalSeparator}" Foreground="Black" 
          Height="30" Width="30" Background="Black"/>
 
         <!-- Color -->
-        <StackPanel Orientation="Horizontal">
-          <TextBlock Text="Farbe:" 
-             VerticalAlignment="Center" 
-           
-             FontSize="13"/>
+        <StackPanel Orientation="Horizontal" Margin="0,0,5,0">
           <mah:ColorPicker SelectedColor="{Binding CurrentColor, Mode=TwoWay}" />
         </StackPanel>
 
@@ -279,12 +274,12 @@
              Margin="0,0,8,0"
              FontSize="13"
              MinWidth="45"/>
-          <TextBlock Text="(Strg+Mausrad)"
-             VerticalAlignment="Center"
-             FontSize="11"
-             Foreground="{DynamicResource MahApps.Brushes.Gray2}"/>
         </StackPanel>
 
+        <Button>
+          <iconPacks:PackIconMaterial Kind="DotsHorizontal" />
+        </Button>
+        
       </WrapPanel>
     </Border>
 
@@ -359,7 +354,7 @@
                           </Style>
                         </Line.Style>
                       </Line>
-                      
+
                       <!-- Pfeilspitze als gefülltes Dreieck -->
                       <Polygon Fill="{Binding StrokeBrush}" 
                                Stroke="{Binding StrokeBrush}"
@@ -376,7 +371,7 @@
                           </Style>
                         </Polygon.Style>
                       </Polygon>
-                      
+
                       <!-- Auswahl-Highlight für Linien/Pfeile -->
                       <Line Stroke="DodgerBlue" 
                             StrokeThickness="8" 
