@@ -101,104 +101,117 @@
     </Grid.RowDefinitions>
 
     <!-- Toolbar -->
-    <Border Grid.Row="0" 
-                Background="{DynamicResource MahApps.Brushes.Accent4}" 
-                BorderBrush="{DynamicResource MahApps.Brushes.Accent}" 
-                BorderThickness="0,2,0,2">
-      <WrapPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
-        <!-- Capture Buttons -->
-        <StackPanel Orientation="Horizontal">
+    <Grid Grid.Row="0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
 
-          <Button Style="{StaticResource ToolbarButton}"
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5"
+                    Grid.Column="0" Grid.ColumnSpan="2">
+          <!-- Capture Buttons -->
+          <StackPanel Orientation="Horizontal">
+
+            <Button Style="{StaticResource ToolbarButton}"
                   Command="{Binding CaptureRegionCommand}" 
                   ToolTip="Screenshot-Bereich auswählen (Strg+D)">
-            <StackPanel Orientation="Horizontal">
-              <iconPacks:PackIconMaterial Kind="CropFree"/>
-            </StackPanel>
-          </Button>
-          <Button Style="{StaticResource ToolbarButton}" 
+              <StackPanel Orientation="Horizontal">
+                <iconPacks:PackIconMaterial Kind="CropFree"/>
+              </StackPanel>
+            </Button>
+            <Button Style="{StaticResource ToolbarButton}" 
                             Command="{Binding CaptureActiveWindowCommand}" 
                             ToolTip="Aktives Fenster aufnehmen">
-            <StackPanel Orientation="Horizontal">
-              <iconPacks:PackIconMaterial Kind="WindowMaximize"/>
-            </StackPanel>
-          </Button>
-          <Button Style="{StaticResource ToolbarButton}" 
+              <StackPanel Orientation="Horizontal">
+                <iconPacks:PackIconMaterial Kind="WindowMaximize"/>
+              </StackPanel>
+            </Button>
+            <Button Style="{StaticResource ToolbarButton}" 
                             Command="{Binding CaptureCommand}" 
                             ToolTip="Primären Bildschirm aufnehmen">
-            <StackPanel Orientation="Horizontal">
-              <iconPacks:PackIconMaterial Kind="Monitor"/>
-            </StackPanel>
-          </Button>
-          <Button Style="{StaticResource ToolbarButton}" 
+              <StackPanel Orientation="Horizontal">
+                <iconPacks:PackIconMaterial Kind="Monitor"/>
+              </StackPanel>
+            </Button>
+            <Button Style="{StaticResource ToolbarButton}" 
                             Command="{Binding CaptureAllScreensCommand}" 
                             ToolTip="Alle Bildschirme aufnehmen">
-            <StackPanel Orientation="Horizontal">
-              <iconPacks:PackIconMaterial Kind="MonitorMultiple"/>
-            </StackPanel>
-          </Button>
-        </StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <iconPacks:PackIconMaterial Kind="MonitorMultiple"/>
+              </StackPanel>
+            </Button>
+          </StackPanel>
 
-        <Separator Style="{StaticResource Local.VerticalSeparator}" Height="10" Width="30"/>
+          <Separator Style="{StaticResource Local.VerticalSeparator}" Height="10" Width="30"/>
 
-        <!-- File Operations -->
-        <Button Style="{StaticResource ToolbarButton}" 
+          <!-- File Operations -->
+          <Button Style="{StaticResource ToolbarButton}" 
                         Command="{Binding SaveCommand}" 
                         IsEnabled="{Binding HasImage}"
                         ToolTip="Screenshot speichern">
-          <StackPanel Orientation="Horizontal">
-            <iconPacks:PackIconMaterial Kind="ContentSave"/>
-          </StackPanel>
-        </Button>
-        <Button Style="{StaticResource ToolbarButton}" 
+            <StackPanel Orientation="Horizontal">
+              <iconPacks:PackIconMaterial Kind="ContentSave"/>
+            </StackPanel>
+          </Button>
+          <Button Style="{StaticResource ToolbarButton}" 
                         Command="{Binding CopyToClipboardCommand}" 
                         IsEnabled="{Binding HasImage}"
                         ToolTip="In Zwischenablage kopieren (Strg+C)">
-          <StackPanel Orientation="Horizontal">
-            <iconPacks:PackIconMaterial Kind="ContentCopy"/>
-          </StackPanel>
-        </Button>
+            <StackPanel Orientation="Horizontal">
+              <iconPacks:PackIconMaterial Kind="ContentCopy"/>
+            </StackPanel>
+          </Button>
 
-        <Separator Style="{StaticResource Local.VerticalSeparator}" Height="10" Width="30"/>
+          <Separator Style="{StaticResource Local.VerticalSeparator}" Height="10" Width="30"/>
 
-        <!-- Undo/Redo -->
-        <Button Style="{StaticResource ToolbarButton}" 
+          <!-- Undo/Redo -->
+          <Button Style="{StaticResource ToolbarButton}" 
                         Background="Transparent"
                         Command="{Binding UndoCommand}" 
                         ToolTip="Rückgängig (bis zu 10 Schritte)">
-          <StackPanel Orientation="Horizontal">
-            <iconPacks:PackIconMaterial Kind="Undo"/>
-          </StackPanel>
-        </Button>
-        <Button Style="{StaticResource ToolbarButton}" 
+            <StackPanel Orientation="Horizontal">
+              <iconPacks:PackIconMaterial Kind="Undo"/>
+            </StackPanel>
+          </Button>
+          <Button Style="{StaticResource ToolbarButton}" 
                 Background="Transparent"
                         Command="{Binding RedoCommand}" 
                         ToolTip="Wiederherstellen">
-          <StackPanel Orientation="Horizontal">
-            <iconPacks:PackIconMaterial Kind="Redo"/>
-          </StackPanel>
-        </Button>
+            <StackPanel Orientation="Horizontal">
+              <iconPacks:PackIconMaterial Kind="Redo"/>
+            </StackPanel>
+          </Button>
 
-        <Separator Style="{StaticResource Local.VerticalSeparator}" Height="10" Width="30"/>
+          <Separator Style="{StaticResource Local.VerticalSeparator}" Height="10" Width="30"/>
 
-        <Button Style="{StaticResource ToolbarButton}"
+          <Button Style="{StaticResource ToolbarButton}"
                                 Background="Transparent"
                         Command="{Binding ClearAnnotationsCommand}" 
                         IsEnabled="{Binding HasImage}"
                         ToolTip="Alle Anmerkungen löschen">
-          <StackPanel Orientation="Horizontal">
-            <iconPacks:PackIconMaterial Kind="DeleteSweep"/>
-          </StackPanel>
-        </Button>
+            <StackPanel Orientation="Horizontal">
+              <iconPacks:PackIconMaterial Kind="DeleteSweep"/>
+            </StackPanel>
+          </Button>
+        </StackPanel>
 
-      </WrapPanel>
-    </Border>
+        <StackPanel Grid.Column="1">
+          <Button Style="{StaticResource ToolbarButton}"
+                  Background="Transparent"
+                  Command="{Binding ClearAnnotationsCommand}" 
+                  IsEnabled="{Binding HasImage}"
+                  ToolTip="Alle Anmerkungen löschen">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <iconPacks:PackIconMaterial Padding="0" Width="20" Height="20" Kind="DotsHorizontal" />
+            </StackPanel>
+          </Button>
 
-    <Border Grid.Row="1" 
-      Background="{DynamicResource MahApps.Brushes.Accent4}" 
-      BorderBrush="{DynamicResource MahApps.Brushes.Accent}" 
-      BorderThickness="0,0,0,2">
-      <WrapPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
+        </StackPanel>
+      
+    </Grid>
+
+    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5"
+                Grid.Row="1">
         <!-- Tools -->
         <StackPanel Orientation="Horizontal" Margin="8,0">
           <!-- Arrow Tool -->
@@ -250,7 +263,7 @@
                 </ControlTemplate.Triggers>
               </ControlTemplate>
             </Button.Template>
-            <iconPacks:PackIconMaterial Kind="ChartTimelineVariant" />
+            <iconPacks:PackIconMaterial Kind="VectorPolylineEdit" />
           </Button>
 
           <!-- Text Tool -->
@@ -280,7 +293,7 @@
           </Button>
 
           <!-- Number Tool -->
-            <Button Tag="Number" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Nummer">
+          <Button Tag="Number" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Nummer">
             <Button.Template>
               <ControlTemplate TargetType="Button">
                 <Grid>
@@ -354,20 +367,18 @@
 
         <!-- Color -->
         <StackPanel Orientation="Horizontal" Margin="0,0,5,0">
-          <mah:ColorPicker SelectedColor="{Binding CurrentColor, Mode=TwoWay}" />
+          <mah:ColorPicker SelectedColor="{Binding CurrentColor, Mode=TwoWay}"
+                           Background="Transparent" />
         </StackPanel>
 
         <!-- Thickness -->
         <StackPanel Orientation="Horizontal">
-          <TextBlock Text="Dicke:" 
-             VerticalAlignment="Center" 
-             Margin="0,0,6,0"
-             FontSize="13"/>
-          <Slider Minimum="1" 
-         Maximum="12" 
-         Value="{Binding CurrentThickness, Mode=TwoWay}"
-         Width="90"
-         Style="{StaticResource MahApps.Styles.Slider}"/>
+          <iconPacks:PackIconMaterial Kind="PencilPlusOutline" 
+                                      HorizontalAlignment="Center" 
+                                      VerticalAlignment="Center" 
+                                      Margin="5,0,5,0"/>
+          <Slider Minimum="1" Maximum="12" Value="{Binding CurrentThickness, Mode=TwoWay}"
+                  Width="90" Style="{StaticResource MahApps.Styles.Slider}"/>
           <TextBlock Text="{Binding CurrentThickness, StringFormat='{}{0:0}'}"
              VerticalAlignment="Center"
              Margin="6,0,0,0"
@@ -377,15 +388,12 @@
 
         <!-- Opacity -->
         <StackPanel Orientation="Horizontal">
-          <TextBlock Text="Transparenz:" 
-             VerticalAlignment="Center" 
-             Margin="0,0,6,0"
-             FontSize="13"/>
-          <Slider Minimum="0.2" 
-         Maximum="1" 
-         Value="{Binding CurrentOpacity, Mode=TwoWay}"
-         Width="100"
-         Style="{StaticResource MahApps.Styles.Slider}"/>
+          <iconPacks:PackIconMaterial Kind="CircleOpacity" 
+                             HorizontalAlignment="Center" 
+                             VerticalAlignment="Center" 
+                             Margin="5,0,5,0"/>
+          <Slider Minimum="0.2" Maximum="1" Value="{Binding CurrentOpacity, Mode=TwoWay}"
+         Width="100" Style="{StaticResource MahApps.Styles.Slider}"/>
           <TextBlock VerticalAlignment="Center"
              Margin="6,0,0,0"
              FontSize="13"
@@ -402,25 +410,22 @@
 
         <!-- Zoom -->
         <StackPanel Orientation="Horizontal">
-          <TextBlock Text="Zoom:" 
-             VerticalAlignment="Center" 
-             Margin="0,0,6,0"
-             FontSize="13"/>
+          <iconPacks:PackIconMaterial Kind="MagnifyPlusOutline"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
           <TextBlock Text="{Binding ZoomLevel, StringFormat='{}{0:P0}'}"
              VerticalAlignment="Center"
              Margin="0,0,8,0"
              FontSize="13"
              MinWidth="45"/>
         </StackPanel>
-      </WrapPanel>
-    </Border>
-
+      </StackPanel>
 
     <!-- Canvas Area -->
     <ScrollViewer Grid.Row="2" 
-                     Background="{DynamicResource MahApps.Brushes.Button.Flat.Background}"
-                     HorizontalScrollBarVisibility="Auto"
-                     VerticalScrollBarVisibility="Auto">
+                  Background="{DynamicResource MahApps.Brushes.Gray8}"
+                  HorizontalScrollBarVisibility="Auto"
+                  VerticalScrollBarVisibility="Auto">
       <Grid>
         <TextBlock Text="📸 Drücken Sie Strg+D oder wählen Sie eine Aufnahmeoption"
                           HorizontalAlignment="Center"

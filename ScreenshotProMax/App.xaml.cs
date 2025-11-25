@@ -1,10 +1,9 @@
-using System;
+using ScreenshotProMax.Services;
+using ScreenshotProMax.Views;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
-using ScreenshotProMax.Services;
-using ScreenshotProMax.Views;
 using Application = System.Windows.Application;
 
 namespace ScreenshotProMax;
@@ -24,9 +23,21 @@ public partial class App : Application
 
     private void SetupTrayIcon()
     {
+        System.Drawing.Icon? trayIcon = null;
+        try
+        {
+            // Verwende das in der EXE eingebettete Icon (ApplicationIcon aus csproj)
+            var exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            trayIcon = System.Drawing.Icon.ExtractAssociatedIcon(exePath);
+        }
+        catch
+        {
+            trayIcon = null;
+        }
+
         _notifyIcon = new NotifyIcon
         {
-            Icon = System.Drawing.SystemIcons.Application,
+            Icon = trayIcon ?? System.Drawing.SystemIcons.Application,
             Visible = true,
             Text = "ScreenshotProMax"
         };
