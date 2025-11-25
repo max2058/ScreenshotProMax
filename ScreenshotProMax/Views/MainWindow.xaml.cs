@@ -429,27 +429,17 @@ public partial class MainWindow : MetroWindow
         }
     }
 
-    private void ToolRadio_Checked(object sender, RoutedEventArgs e)
+    private void ToolButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is RadioButton radio && radio.Tag is string tag && Enum.TryParse<AnnotationType>(tag, out var tool))
+        if (sender is Button btn && btn.Tag is string tag && Enum.TryParse<AnnotationType>(tag, out var tool))
         {
             ViewModel.CurrentTool = tool;
-            
-            // Cursor ändern basierend auf dem Werkzeug
             if (tool == AnnotationType.Eraser)
-            {
                 OverlayCanvas.Cursor = _eraserCursor ?? Cursors.Cross;
-            }
             else
-            {
                 OverlayCanvas.Cursor = Cursors.Arrow;
-            }
-            
-            // Deselektiere beim Wechsel zu einem Zeichenwerkzeug
             if (tool != AnnotationType.Selection)
-            {
                 ViewModel.DeselectAll();
-            }
         }
     }
 }

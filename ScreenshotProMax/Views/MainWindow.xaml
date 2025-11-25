@@ -20,9 +20,55 @@
     <converters:OpacityToPercentageConverter x:Key="OpacityToPercentageConverter" />
 
     <Style TargetType="Button" x:Key="ToolbarButton" BasedOn="{StaticResource MahApps.Styles.Button}">
-      <Setter Property="Margin" Value="4,2" />
-      <Setter Property="Padding" Value="10,6" />
-      <Setter Property="Height" Value="32" />
+      <Setter Property="Height" Value="36" />
+      <Setter Property="MinWidth" Value="36" />
+      <Setter Property="Padding" Value="4,4" />
+      <Setter Property="Margin" Value="4,0" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Grid>
+              <Border x:Name="Chrome"
+                      Background="{TemplateBinding Background}"
+                      BorderBrush="{TemplateBinding BorderBrush}"
+                      BorderThickness="{TemplateBinding BorderThickness}"
+                      CornerRadius="4">
+                <ContentPresenter HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  RecognizesAccessKey="True" />
+              </Border>
+              <Rectangle x:Name="AccentBar"
+                         Height="3"
+                         VerticalAlignment="Bottom"
+                         Fill="{DynamicResource MahApps.Brushes.Accent}"
+                         RadiusX="2" RadiusY="2"
+                         Visibility="Collapsed" />
+            </Grid>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Chrome" Property="Background" Value="#11000000" />
+                <Setter TargetName="Chrome" Property="BorderBrush" Value="#33000000" />
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="Chrome" Property="Background" Value="#22000000" />
+                <Setter TargetName="Chrome" Property="BorderBrush" Value="#44000000" />
+                <Setter TargetName="AccentBar" Property="Visibility" Value="Visible" />
+              </Trigger>
+              <Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Accent}" />
+                <Setter TargetName="AccentBar" Property="Visibility" Value="Visible" />
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False">
+                <Setter TargetName="Chrome" Property="Opacity" Value="0.4" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
       <Setter Property="FontSize" Value="13" />
     </Style>
 
@@ -50,7 +96,7 @@
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="50"/>
-      <RowDefinition Height="40"/>
+      <RowDefinition Height="50"/>
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
 
@@ -93,8 +139,7 @@
           </Button>
         </StackPanel>
 
-        <Separator Style="{StaticResource Local.VerticalSeparator}" Foreground="Black" 
-         Height="30" Width="30" Background="Black"/>
+        <Separator Style="{StaticResource Local.VerticalSeparator}" Height="10" Width="30"/>
 
         <!-- File Operations -->
         <Button Style="{StaticResource ToolbarButton}" 
@@ -114,8 +159,7 @@
           </StackPanel>
         </Button>
 
-        <Separator Style="{StaticResource Local.VerticalSeparator}" Foreground="Black" 
-         Height="30" Width="30" Background="Black"/>
+        <Separator Style="{StaticResource Local.VerticalSeparator}" Height="10" Width="30"/>
 
         <!-- Undo/Redo -->
         <Button Style="{StaticResource ToolbarButton}" 
@@ -135,8 +179,7 @@
           </StackPanel>
         </Button>
 
-        <Separator Style="{StaticResource Local.VerticalSeparator}" Foreground="Black" 
-         Height="30" Width="30" Background="Black"/>
+        <Separator Style="{StaticResource Local.VerticalSeparator}" Height="10" Width="30"/>
 
         <Button Style="{StaticResource ToolbarButton}"
                                 Background="Transparent"
@@ -158,61 +201,156 @@
       <WrapPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
         <!-- Tools -->
         <StackPanel Orientation="Horizontal" Margin="8,0">
-          <RadioButton 
-              x:Name="ArrowRadio"
-              GroupName="Tools" 
-              Tag="Arrow" 
-              Checked="ToolRadio_Checked" 
-              Style="{StaticResource ToolRadioButton}"
-              Background="Transparent">
-            <iconPacks:PackIconMaterial Kind="ArrowTopRight"/>
-          </RadioButton>
-          <RadioButton 
-              GroupName="Tools" 
-              Tag="Line" 
-              Checked="ToolRadio_Checked" 
-              Style="{StaticResource ToolRadioButton}"
-              Background="Transparent">
+          <!-- Arrow Tool -->
+          <Button Tag="Arrow" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Pfeil">
+            <Button.Template>
+              <ControlTemplate TargetType="Button">
+                <Grid>
+                  <Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="4">
+                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Border>
+                  <Rectangle x:Name="SelectedBar" Height="3" VerticalAlignment="Bottom" Fill="{DynamicResource MahApps.Brushes.Accent}" Visibility="Collapsed" RadiusX="2" RadiusY="2" />
+                </Grid>
+                <ControlTemplate.Triggers>
+                  <DataTrigger Binding="{Binding CurrentTool}" Value="Arrow">
+                    <Setter TargetName="Chrome" Property="Background" Value="#FFE4E9F2" />
+                    <Setter TargetName="Chrome" Property="BorderBrush" Value="#FFB5C3D1" />
+                    <Setter TargetName="SelectedBar" Property="Visibility" Value="Visible" />
+                  </DataTrigger>
+                  <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Chrome" Property="Background" Value="#11000000" />
+                    <Setter TargetName="Chrome" Property="BorderBrush" Value="#33000000" />
+                  </Trigger>
+                </ControlTemplate.Triggers>
+              </ControlTemplate>
+            </Button.Template>
+            <iconPacks:PackIconMaterial Kind="ArrowTopRight" />
+          </Button>
+
+          <!-- Line Tool -->
+          <Button Tag="Line" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Linie">
+            <Button.Template>
+              <ControlTemplate TargetType="Button">
+                <Grid>
+                  <Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="4">
+                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Border>
+                  <Rectangle x:Name="SelectedBar" Height="3" VerticalAlignment="Bottom" Fill="{DynamicResource MahApps.Brushes.Accent}" Visibility="Collapsed" RadiusX="2" RadiusY="2" />
+                </Grid>
+                <ControlTemplate.Triggers>
+                  <DataTrigger Binding="{Binding CurrentTool}" Value="Line">
+                    <Setter TargetName="Chrome" Property="Background" Value="#FFE4E9F2" />
+                    <Setter TargetName="Chrome" Property="BorderBrush" Value="#FFB5C3D1" />
+                    <Setter TargetName="SelectedBar" Property="Visibility" Value="Visible" />
+                  </DataTrigger>
+                  <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Chrome" Property="Background" Value="#11000000" />
+                    <Setter TargetName="Chrome" Property="BorderBrush" Value="#33000000" />
+                  </Trigger>
+                </ControlTemplate.Triggers>
+              </ControlTemplate>
+            </Button.Template>
             <iconPacks:PackIconMaterial Kind="ChartTimelineVariant" />
-          </RadioButton>
-          <RadioButton 
-              GroupName="Tools" 
-              Tag="Text" 
-              Checked="ToolRadio_Checked" 
-              Style="{StaticResource ToolRadioButton}"
-              Background="Transparent">
+          </Button>
+
+          <!-- Text Tool -->
+          <Button Tag="Text" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Text">
+            <Button.Template>
+              <ControlTemplate TargetType="Button">
+                <Grid>
+                  <Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="4">
+                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Border>
+                  <Rectangle x:Name="SelectedBar" Height="3" VerticalAlignment="Bottom" Fill="{DynamicResource MahApps.Brushes.Accent}" Visibility="Collapsed" RadiusX="2" RadiusY="2" />
+                </Grid>
+                <ControlTemplate.Triggers>
+                  <DataTrigger Binding="{Binding CurrentTool}" Value="Text">
+                    <Setter TargetName="Chrome" Property="Background" Value="#FFE4E9F2" />
+                    <Setter TargetName="Chrome" Property="BorderBrush" Value="#FFB5C3D1" />
+                    <Setter TargetName="SelectedBar" Property="Visibility" Value="Visible" />
+                  </DataTrigger>
+                  <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Chrome" Property="Background" Value="#11000000" />
+                    <Setter TargetName="Chrome" Property="BorderBrush" Value="#33000000" />
+                  </Trigger>
+                </ControlTemplate.Triggers>
+              </ControlTemplate>
+            </Button.Template>
             <iconPacks:PackIconMaterial Kind="FormatTextbox" />
-          </RadioButton>
-          <RadioButton
-              GroupName="Tools" 
-              Tag="Number" 
-              Checked="ToolRadio_Checked" 
-              Style="{StaticResource ToolRadioButton}"
-              Background="Transparent">
+          </Button>
+
+          <!-- Number Tool -->
+            <Button Tag="Number" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Nummer">
+            <Button.Template>
+              <ControlTemplate TargetType="Button">
+                <Grid>
+                  <Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="4">
+                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Border>
+                  <Rectangle x:Name="SelectedBar" Height="3" VerticalAlignment="Bottom" Fill="{DynamicResource MahApps.Brushes.Accent}" Visibility="Collapsed" RadiusX="2" RadiusY="2" />
+                </Grid>
+                <ControlTemplate.Triggers>
+                  <DataTrigger Binding="{Binding CurrentTool}" Value="Number">
+                    <Setter TargetName="Chrome" Property="Background" Value="#FFE4E9F2" />
+                    <Setter TargetName="Chrome" Property="BorderBrush" Value="#FFB5C3D1" />
+                    <Setter TargetName="SelectedBar" Property="Visibility" Value="Visible" />
+                  </DataTrigger>
+                  <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Chrome" Property="Background" Value="#11000000" />
+                    <Setter TargetName="Chrome" Property="BorderBrush" Value="#33000000" />
+                  </Trigger>
+                </ControlTemplate.Triggers>
+              </ControlTemplate>
+            </Button.Template>
             <iconPacks:PackIconMaterial Kind="Numeric1CircleOutline" />
-          </RadioButton>
-          <RadioButton 
-              GroupName="Tools" 
-              Tag="Selection" 
-              Checked="ToolRadio_Checked" 
-              Style="{StaticResource ToolRadioButton}"
-              Background="Transparent"
-              ToolTip="Anmerkungen auswählen, verschieben und skalieren">
+          </Button>
+
+          <Separator Style="{StaticResource Local.VerticalSeparator}" Height="10" Width="30"/>
+
+          <!-- Selection Tool (noch nicht implementiert) -->
+          <Button Tag="Selection" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Auswahl (noch ohne Funktion)">
+            <Button.Template>
+              <ControlTemplate TargetType="Button">
+                <Grid>
+                  <Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="4">
+                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Border>
+                  <Rectangle x:Name="SelectedBar" Height="3" VerticalAlignment="Bottom" Fill="{DynamicResource MahApps.Brushes.Accent}" Visibility="Collapsed" RadiusX="2" RadiusY="2" />
+                </Grid>
+                <ControlTemplate.Triggers>
+                  <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Chrome" Property="Background" Value="#11000000" />
+                    <Setter TargetName="Chrome" Property="BorderBrush" Value="#33000000" />
+                  </Trigger>
+                </ControlTemplate.Triggers>
+              </ControlTemplate>
+            </Button.Template>
             <iconPacks:PackIconMaterial Kind="CursorDefaultOutline" />
-          </RadioButton>
-          <RadioButton
-              GroupName="Tools" 
-              Tag="Eraser" 
-              Checked="ToolRadio_Checked" 
-              Style="{StaticResource ToolRadioButton}"
-              Background="Transparent"
-              ToolTip="Anmerkungen durch Überfahren löschen">
+          </Button>
+
+          <!-- Eraser Tool (noch nicht implementiert) -->
+          <Button Tag="Eraser" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Radierer (noch ohne Funktion)">
+            <Button.Template>
+              <ControlTemplate TargetType="Button">
+                <Grid>
+                  <Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="4">
+                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Border>
+                  <Rectangle x:Name="SelectedBar" Height="3" VerticalAlignment="Bottom" Fill="{DynamicResource MahApps.Brushes.Accent}" Visibility="Collapsed" RadiusX="2" RadiusY="2" />
+                </Grid>
+                <ControlTemplate.Triggers>
+                  <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Chrome" Property="Background" Value="#11000000" />
+                    <Setter TargetName="Chrome" Property="BorderBrush" Value="#33000000" />
+                  </Trigger>
+                </ControlTemplate.Triggers>
+              </ControlTemplate>
+            </Button.Template>
             <iconPacks:PackIconMaterial Kind="Eraser" />
-          </RadioButton>
+          </Button>
         </StackPanel>
 
-        <Separator Style="{StaticResource Local.VerticalSeparator}" Foreground="Black" 
-         Height="30" Width="30" Background="Black"/>
+        <Separator Style="{StaticResource Local.VerticalSeparator}" Height="10" Width="30"/>
 
         <!-- Color -->
         <StackPanel Orientation="Horizontal" Margin="0,0,5,0">
@@ -260,8 +398,7 @@
           </TextBlock>
         </StackPanel>
 
-        <Separator Style="{StaticResource Local.VerticalSeparator}" Foreground="Black" 
-         Height="30" Width="30" Background="Black"/>
+        <Separator Style="{StaticResource Local.VerticalSeparator}" Height="10" Width="30"/>
 
         <!-- Zoom -->
         <StackPanel Orientation="Horizontal">
@@ -275,11 +412,6 @@
              FontSize="13"
              MinWidth="45"/>
         </StackPanel>
-
-        <Button>
-          <iconPacks:PackIconMaterial Kind="DotsHorizontal" />
-        </Button>
-        
       </WrapPanel>
     </Border>
 
