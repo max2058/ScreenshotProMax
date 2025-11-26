@@ -1,10 +1,14 @@
 using ScreenshotProMax.Services;
 using ScreenshotProMax.Views;
+using ScreenshotProMax.Localization;
+using ScreenshotProMax.Properties;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using Application = System.Windows.Application;
+using System.Globalization;
+using ScreenshotProMax.Resources;
 
 namespace ScreenshotProMax;
 
@@ -13,9 +17,25 @@ public partial class App : Application
     private NotifyIcon? _notifyIcon;
     private bool _isExit;
     private HotkeyService? _hotkeyService;
+    public static LocalizedStrings Loc { get; private set; } = new LocalizedStrings();
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        // Set culture from saved settings
+        var culture = Settings.Default.CultureLang;
+        if (!string.IsNullOrEmpty(culture))
+        {
+            var ci = new CultureInfo(culture);
+            CultureInfo.DefaultThreadCurrentUICulture = ci;
+            CultureInfo.DefaultThreadCurrentCulture = ci;
+            LanguageGUI.Culture = ci; // set resource culture
+        }
+
+        // Apply saved theme
+        var theme = Settings.Default.MainDesignStyle ?? "Dark";
+        var baseUri = $"pack://application:,,,/MahApps.Metro;component/Styles/Themes/{theme}.Steel.xaml";
+        Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = new System.Uri(baseUri) });
+
         base.OnStartup(e);
         SetupTrayIcon();
         RegisterGlobalHotkey();
@@ -26,7 +46,6 @@ public partial class App : Application
         System.Drawing.Icon? trayIcon = null;
         try
         {
-            // Verwende das in der EXE eingebettete Icon (ApplicationIcon aus csproj)
             var exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
             trayIcon = System.Drawing.Icon.ExtractAssociatedIcon(exePath);
         }
@@ -83,23 +102,26 @@ public partial class App : Application
 
     private void RegisterGlobalHotkey()
     {
-        // Create a hidden helper window just for hotkey registration if main window not yet created
         var helperWindow = new Window { Width = 0, Height = 0, ShowInTaskbar = false, WindowStyle = WindowStyle.ToolWindow, Visibility = Visibility.Hidden };
         helperWindow.Loaded += (_, _) =>
         {
-            _hotkeyService = new HotkeyService();
-            var handle = new WindowInteropHelper(helperWindow).Handle;
-            if (_hotkeyService.RegisterHotkey(handle, ModifierKeys.Control, Key.D))
-            {
-                _hotkeyService.HotkeyPressed += (_, _) => TriggerRegionCapture();
-            }
+            _hotkey_service_Register(helperWindow);
         };
         helperWindow.Show();
     }
 
+    private void _hotkey_service_Register(Window helperWindow)
+    {
+        _hotkeyService = new HotkeyService();
+        var handle = new WindowInteropHelper(helperWindow).Handle;
+        if (_hotkeyService.RegisterHotkey(handle, ModifierKeys.Control, Key.D))
+        {
+            _hotkeyService.HotkeyPressed += (_, _) => TriggerRegionCapture();
+        }
+    }
+
     private async void TriggerRegionCapture()
     {
-        // Ensure window minimized or hidden during capture
         if (Current.MainWindow is Window mw)
         {
             mw.WindowState = WindowState.Minimized;
@@ -109,7 +131,6 @@ public partial class App : Application
         selector.ShowDialog();
         if (selector.SelectedRegion.HasValue)
         {
-            // Use ScreenshotService directly to avoid waiting for UI creation
             var service = new ScreenshotService();
             var bmp = await service.CaptureRegionAsync(selector.SelectedRegion.Value);
             ShowMainWindow();
@@ -121,7 +142,6 @@ public partial class App : Application
         }
         else
         {
-            // Restore if cancelled
             ShowMainWindow();
         }
     }

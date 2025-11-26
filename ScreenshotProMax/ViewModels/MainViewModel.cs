@@ -98,23 +98,6 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void NewIssue()
-    {
-        try
-        {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = "https://github.com/max2058/ScreenshotProMax/issues/new",
-                UseShellExecute = true
-            });
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Fehler beim Öffnen des Browsers: {ex.Message}");
-        }
-    }
-
-    [RelayCommand]
     private async Task CaptureAsync()
     {
         // Show screen selector overlay

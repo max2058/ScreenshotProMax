@@ -1,0 +1,378 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="BtnCntOpenAll" xml:space="preserve">
+    <value>Open All</value>
+  </data>
+  <data name="BtnCntPP" xml:space="preserve">
+    <value>Open Testing Program</value>
+  </data>
+  <data name="BtnCntPv" xml:space="preserve">
+    <value>Open PV</value>
+  </data>
+  <data name="BtnCntTia" xml:space="preserve">
+    <value>Open TIA-Project</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Customer" xml:space="preserve">
+    <value>Customer:</value>
+  </data>
+  <data name="GreetingDay" xml:space="preserve">
+    <value>Hello</value>
+  </data>
+  <data name="GreetingEvening" xml:space="preserve">
+    <value>Good evening</value>
+  </data>
+  <data name="GreetingMorning" xml:space="preserve">
+    <value>Good morning</value>
+  </data>
+  <data name="MaterialNumber" xml:space="preserve">
+    <value>Material number:</value>
+  </data>
+  <data name="MsgBoxOpenTiaPortalTitle" xml:space="preserve">
+    <value>Obsolete TIA Portal Project</value>
+  </data>
+  <data name="MsgBoxOpenTiaPortalTxt1" xml:space="preserve">
+    <value>The project ends on</value>
+  </data>
+  <data name="MsgBoxOpenTiaPortalTxt2" xml:space="preserve">
+    <value>Instead of the current version</value>
+  </data>
+  <data name="OrderNumber" xml:space="preserve">
+    <value>Order number:</value>
+  </data>
+  <data name="OthersN" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="SerialNumber" xml:space="preserve">
+    <value>Serial number:</value>
+  </data>
+  <data name="SettFlyActCol" xml:space="preserve">
+    <value>Accent color</value>
+  </data>
+  <data name="SettFlyAppSettings" xml:space="preserve">
+    <value>Basic settings</value>
+  </data>
+  <data name="SettFlyBtnGetUserInfo" xml:space="preserve">
+    <value>Update user information</value>
+  </data>
+  <data name="SettFlyEmail" xml:space="preserve">
+    <value>email</value>
+  </data>
+  <data name="SettFlyFirstname" xml:space="preserve">
+    <value>First name</value>
+  </data>
+  <data name="SettFlyIsTester" xml:space="preserve">
+    <value>Tester</value>
+  </data>
+  <data name="SettFlyIsTestplaner" xml:space="preserve">
+    <value>Testplaner</value>
+  </data>
+  <data name="SettFlyLang" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="SettFlyLastUserDataUpdate" xml:space="preserve">
+    <value>Last data retrieval</value>
+  </data>
+  <data name="SettFlyLogin" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="SettFlyMainCol" xml:space="preserve">
+    <value>Main color</value>
+  </data>
+  <data name="SettFlyName" xml:space="preserve">
+    <value>Last name</value>
+  </data>
+  <data name="SettFlyOrga" xml:space="preserve">
+    <value>Department</value>
+  </data>
+  <data name="SettFlyStyle" xml:space="preserve">
+    <value>App Design</value>
+  </data>
+  <data name="SettFlyUserInfoHeader" xml:space="preserve">
+    <value>User information</value>
+  </data>
+  <data name="ShortText" xml:space="preserve">
+    <value>Short text:</value>
+  </data>
+  <data name="TtPprNmb" xml:space="preserve">
+    <value>Enter Fauf and press Enter. (Right-click for history)</value>
+  </data>
+  <data name="TtSrNmb" xml:space="preserve">
+    <value>Enter the serial number and press Enter.</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="MsgBoxOpenTiaPortalTxt3" xml:space="preserve">
+    <value>How would you like to proceed?</value>
+  </data>
+  <data name="MsgBoxOpenTiaPortalBtn1" xml:space="preserve">
+    <value>Upgrade project</value>
+  </data>
+  <data name="MsgBoxOpenTiaPortalBtn2" xml:space="preserve">
+    <value>Open with old version</value>
+  </data>
+  <data name="LblTestType" xml:space="preserve">
+    <value>test type</value>
+  </data>
+  <data name="MsgBoxOpenPvBtn1" xml:space="preserve">
+    <value>Open All Word Files</value>
+  </data>
+  <data name="MsgBoxOpenPvBtn2" xml:space="preserve">
+    <value>Open in File Explorer</value>
+  </data>
+  <data name="MsgBoxOpenPvTitle" xml:space="preserve">
+    <value>Multiple PVs found</value>
+  </data>
+  <data name="MsgBoxOpenPvTxt1" xml:space="preserve">
+    <value>There were</value>
+  </data>
+  <data name="MsgBoxOpenPvTxt2" xml:space="preserve">
+    <value>Word‑Dateien gefunden. Aktion wählen:</value>
+  </data>
+  <data name="LblZTestings" xml:space="preserve">
+    <value>Observe Z-test packages!</value>
+  </data>
+  <data name="LblIsDelfin" xml:space="preserve">
+    <value>Delfin Order</value>
+  </data>
+  <data name="strChangeAppLanguage" xml:space="preserve">
+    <value>The application must be restarted for the language change to take effect!</value>
+  </data>
+  <data name="LblHello" xml:space="preserve">
+    <value>Hello</value>
+  </data>
+  <data name="TtOpenTsProg" xml:space="preserve">
+    <value>If a serial number is selected, the associated test program can be opened here.</value>
+  </data>
+  <data name="TtOpenTiaPortal" xml:space="preserve">
+    <value>Open the TIA Portal project here.</value>
+  </data>
+  <data name="TtOpenPV" xml:space="preserve">
+    <value>Open the test specification(s) here.</value>
+  </data>
+  <data name="lblNoCockpitData" xml:space="preserve">
+    <value>Cabinet already delivered? No data available in the control cockpit.</value>
+  </data>
+  <data name="TtDeleteButton" xml:space="preserve">
+    <value>Deletes the entire interface and all loaded data.</value>
+  </data>
+  <data name="TtLoadTimecardButton" xml:space="preserve">
+    <value>Open time slip Excel template.</value>
+  </data>
+  <data name="TtGenerateReworkMailButton" xml:space="preserve">
+    <value>Generate the WVSB rework email. (LS)</value>
+  </data>
+  <data name="TtGenerateSparePartMailButton" xml:space="preserve">
+    <value>Open spare parts order email template.</value>
+  </data>
+  <data name="TtOpenFileExplorerButton" xml:space="preserve">
+    <value>Open the file explorer of the Order at ''40_Prüfung''.</value>
+  </data>
+  <data name="TtTsTestProgramPath" xml:space="preserve">
+    <value>Path to the TestStand test program.</value>
+  </data>
+  <data name="TtTiaProjectPath" xml:space="preserve">
+    <value>Path to the TIA-Project.</value>
+  </data>
+  <data name="TtPruefvorschriftPath" xml:space="preserve">
+    <value>Path to the ''Prüfvorschrift''</value>
+  </data>
+  <data name="TtOpenOtherStuffButton" xml:space="preserve">
+    <value>Open/start all ''Other'' content.</value>
+  </data>
+  <data name="TtOpenAllTogetherButton" xml:space="preserve">
+    <value>Opens/starts all paths together.</value>
+  </data>
+  <data name="TtLoadDataButton" xml:space="preserve">
+    <value>Load data By order or serial number.</value>
+  </data>
+  <data name="HelpF1" xml:space="preserve">
+    <value>'F1' for Help</value>
+  </data>
+  <data name="BtnStartTiaTs" xml:space="preserve">
+    <value>OPEN TEST-PROGRAM AND TIA-PROJECT</value>
+  </data>
+  <data name="TtBtnStartTiaTs" xml:space="preserve">
+    <value>Open Test-Program and TIA-Project</value>
+  </data>
+  <data name="AppVersion" xml:space="preserve">
+    <value>App version:</value>
+  </data>
+  <data name="CmClearHistory" xml:space="preserve">
+    <value>Clear History</value>
+  </data>
+  <data name="CopyPathInfoCommand" xml:space="preserve">
+    <value>Copy Path</value>
+  </data>
+  <data name="TtPathOther1" xml:space="preserve">
+    <value>Right-click to copy</value>
+  </data>
+  <data name="TtPathOther2" xml:space="preserve">
+    <value>Right-click to copy</value>
+  </data>
+  <data name="TtPathOther3" xml:space="preserve">
+    <value>Right-click to copy</value>
+  </data>
+  <data name="TtPathOther4" xml:space="preserve">
+    <value>Right-click to copy</value>
+  </data>
+  <data name="TtPathOther5" xml:space="preserve">
+    <value>Right-click to copy</value>
+  </data>
+  <data name="LblGreetingMorning" xml:space="preserve">
+    <value>Good Morning</value>
+  </data>
+  <data name="LblGreetingHello" xml:space="preserve">
+    <value>Hello</value>
+  </data>
+  <data name="LblGreetingEvening" xml:space="preserve">
+    <value>Good Evening</value>
+  </data>
+  <data name="LblGreetingNight" xml:space="preserve">
+    <value>Night Shift?</value>
+  </data>
+  <data name="LblTiaPortal" xml:space="preserve">
+    <value>TIA portal</value>
+  </data>
+  <data name="LblPv" xml:space="preserve">
+    <value>Prüfvorschrift</value>
+  </data>
+  <data name="LblTestStand" xml:space="preserve">
+    <value>TestStand</value>
+  </data>
+  <data name="SettFlyAppDetailInfo" xml:space="preserve">
+    <value>App details and info</value>
+  </data>
+  <data name="SettFlyBtnOpenWinLocal" xml:space="preserve">
+    <value>Open log files and user settings</value>
+  </data>
+  <data name="SettFlyBtnOpenGblPos" xml:space="preserve">
+    <value>Open program folder and global settings</value>
+  </data>
+  <data name="TtInfoUserInfoDetails" xml:space="preserve">
+    <value>The user data is only updated every 30 days and reloaded when the app is started. Experience has shown that the data rarely changes. The last data retrieval can be viewed here, but can be triggered manually via the button.</value>
+  </data>
+  <data name="TtNewBugOrFeatureCommand" xml:space="preserve">
+    <value>Report a bug or request a new function.</value>
+  </data>
+</root>

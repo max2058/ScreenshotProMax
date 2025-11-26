@@ -7,6 +7,8 @@ using CommunityToolkit.Mvvm.Input;
 using ControlzEx.Theming;
 using ScreenshotProMax.Interfaces;
 using ScreenshotProMax.Services;
+using ScreenshotProMax.Resources;
+using ScreenshotProMax;
 
 namespace ScreenshotProMax.ViewModels
 {
@@ -49,7 +51,8 @@ namespace ScreenshotProMax.ViewModels
             SupportedCultures = new ObservableCollection<CultureInfo>
             {
                 new CultureInfo("de-DE"),
-                new CultureInfo("en-US")
+                new CultureInfo("en-US"),
+                new CultureInfo("pl-PL")
             };
         }
 
@@ -68,9 +71,15 @@ namespace ScreenshotProMax.ViewModels
         {
             if (SelectedCulture != null)
             {
-                _settingsService.SetAppLanguage(SelectedCulture);
+                _settings_service_SetAppLanguage(SelectedCulture);
                 Thread.CurrentThread.CurrentCulture = SelectedCulture;
                 Thread.CurrentThread.CurrentUICulture = SelectedCulture;
+
+                // Update resource manager culture
+                LanguageGUI.Culture = SelectedCulture;
+
+                // Update application-wide localized strings
+                App.Loc.Refresh();
             }
         }
 
@@ -82,5 +91,8 @@ namespace ScreenshotProMax.ViewModels
 
         // helper methods for bindings that cannot directly reference service (keeps XAML friendly)
         private string _settings_service_AppVersion() => _settingsService.AppVersion();
+
+        // wrapper to call service without breaking generated code expectations
+        private bool _settings_service_SetAppLanguage(CultureInfo ci) => _settingsService.SetAppLanguage(ci);
     }
 }

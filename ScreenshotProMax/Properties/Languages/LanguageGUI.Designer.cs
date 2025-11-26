@@ -35,7 +35,9 @@ namespace ScreenshotProMax.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ScreenshotProMax.Resources.LanguageGUI", typeof(LanguageGUI).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager(
+                        "ScreenshotProMax.Properties.Languages.LanguageGUI",
+                        typeof(LanguageGUI).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
