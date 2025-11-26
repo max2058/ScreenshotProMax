@@ -371,8 +371,10 @@
             <iconPacks:PackIconMaterial Kind="EllipseOutline" />
           </Button>
 
-          <!-- Selection Tool (noch nicht implementiert) -->
-          <Button Tag="Selection" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Auswahl (noch ohne Funktion)">
+        <Separator Style="{StaticResource Local.VerticalSeparator}" Height="10" Width="30"/>
+
+        <!-- Selection Tool (noch nicht implementiert) -->
+          <Button Tag="Selection" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Auswahl">
             <Button.Template>
               <ControlTemplate TargetType="Button">
                 <Grid>
@@ -393,7 +395,7 @@
           </Button>
 
           <!-- Eraser Tool (noch nicht implementiert) -->
-          <Button Tag="Eraser" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Radierer (noch ohne Funktion)">
+          <Button Tag="Eraser" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Radierer">
             <Button.Template>
               <ControlTemplate TargetType="Button">
                 <Grid>
