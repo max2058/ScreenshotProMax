@@ -8,10 +8,11 @@
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:viewModels="clr-namespace:ScreenshotProMax.ViewModels"
         xmlns:models="clr-namespace:ScreenshotProMax.Models"
+        xmlns:app="clr-namespace:ScreenshotProMax"
         xmlns:converters="clr-namespace:ScreenshotProMax.Converters"
         mc:Ignorable="d"
         Title="Screenshot Pro Max" 
-        Height="720" Width="1280"
+        Height="800" Width="1200"
         TitleCharacterCasing="Normal"
         WindowStartupLocation="CenterScreen"
         SaveWindowPosition="True"
@@ -96,33 +97,11 @@
   </mah:MetroWindow.DataContext>
 
 
-  <!-- Rechte Fensterbefehle Button SettingsFlyout öffnen -->
-  <mah:MetroWindow.RightWindowCommands>
-    <mah:WindowCommands>
-      <Button ToolTip="Einstellungen" Command="{Binding OpenSetFlyOutCommand}">
-        <Button.ContentTemplate>
-          <DataTemplate>
-            <StackPanel Orientation="Horizontal">
-              <iconPacks:PackIconMaterial
-                x:Name="CogIcon"
-                Width="20"
-                Height="20"
-                VerticalAlignment="Center"
-                Kind="CogOutline">
-              </iconPacks:PackIconMaterial>
-              <TextBlock Margin="4 0 0 0" VerticalAlignment="Center"/>
-            </StackPanel>
-          </DataTemplate>
-        </Button.ContentTemplate>
-      </Button>
-    </mah:WindowCommands>
-  </mah:MetroWindow.RightWindowCommands>
-
   <!-- Flyouts im MetroWindow eigenes Control -->
   <mah:MetroWindow.Flyouts>
     <mah:FlyoutsControl>
       <!-- Flyouts-Steuerelement -->
-      <mah:Flyout Header="Einstellungen" IsOpen="{Binding IsSettingsFlyoutOpen}"
+      <mah:Flyout Header="{Binding SettFlyHeader, Source={x:Static app:App.Loc}, Mode=OneWay}" IsOpen="{Binding IsSettingsFlyoutOpen}"
                 Width="500" Position="Right" Theme="Adapt" BorderBrush="Gray" BorderThickness="1"
                 CloseCommand="{Binding CloseSettingsFlyOutCommand}">
         <mycontrols:SettingsFlyout/>
@@ -228,14 +207,28 @@
       </StackPanel>
 
       <StackPanel Grid.Column="2">
-        <Button Style="{StaticResource ToolbarButton}"
+        <Button x:Name="MoreButton" Style="{StaticResource ToolbarButton}"
                   Background="Transparent"
-                  Command="{Binding ClearAnnotationsCommand}" 
-                  IsEnabled="{Binding HasImage}"
-                  ToolTip="Alle Anmerkungen löschen">
+                  Click="MoreButton_Click"
+                  ToolTip="Mehr">
           <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
             <iconPacks:PackIconMaterial Padding="0" Width="20" Height="20" Kind="DotsHorizontal" />
           </StackPanel>
+          <Button.ContextMenu>
+            <ContextMenu>
+              <MenuItem Header="Einstellungen" Command="{Binding OpenSetFlyOutCommand}">
+                <MenuItem.Icon>
+                  <iconPacks:PackIconMaterial Kind="CogOutline" Width="16" Height="16"/>
+                </MenuItem.Icon>
+              </MenuItem>
+              <MenuItem Header="Über Screenshot Pro Max" Command="{Binding OpenAboutCommand}">
+                <MenuItem.Icon>
+                  <iconPacks:PackIconMaterial Kind="InformationOutline" Width="16" Height="16"/>
+                </MenuItem.Icon>
+              </MenuItem>
+            </ContextMenu>
+          </Button.ContextMenu>
+
         </Button>
 
       </StackPanel>
@@ -535,19 +528,26 @@
 
     <!-- Canvas Area -->
     <ScrollViewer Grid.Row="2" 
-                  Background="{DynamicResource MahApps.Brushes.Gray8}"
                   HorizontalScrollBarVisibility="Auto"
-                  VerticalScrollBarVisibility="Auto">
+                  VerticalScrollBarVisibility="Auto"
+                  Background="{DynamicResource MahApps.Brushes.Accent4}">
       <Grid>
-        <TextBlock Text="📸 Drücken Sie 'Druck' oder wählen Sie eine Aufnahmeoption"
-                          HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          FontSize="18"
-                          Foreground="{DynamicResource MahApps.Brushes.Gray2}"
-                          Visibility="{Binding HasImage, Converter={x:Static converters:BooleanToVisibilityConverter.InvertedInstance}}"/>
+       
+
+        <TextBlock HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="20"
+                Padding="8">
+          <!-- Inline image + text inside TextBlock using InlineUIContainer + Run -->
+          <InlineUIContainer BaselineAlignment="Center">
+            <iconPacks:PackIconMaterial Kind="Camera" Height="18" Width="18" />
+          </InlineUIContainer>
+            <Run Text="{Binding MasterInfoText, Source={x:Static app:App.Loc}, Mode=OneWay}"/>
+        </TextBlock>
+
 
         <!-- Neuer Border nur um das eigentliche Screenshot-Bild + Overlay -->
-        <Border BorderBrush="Black"
+        <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
                         BorderThickness="2"
                         Padding="0"
                         HorizontalAlignment="Center"

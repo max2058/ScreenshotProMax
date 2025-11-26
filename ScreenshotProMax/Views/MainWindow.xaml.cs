@@ -9,6 +9,7 @@ using ScreenshotProMax.Models;
 using ScreenshotProMax.Services;
 using ScreenshotProMax.ViewModels;
 using MahApps.Metro.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace ScreenshotProMax.Views;
 
@@ -444,6 +445,22 @@ public partial class MainWindow : MetroWindow
 				OverlayCanvas.Cursor = Cursors.Arrow;
 			if (tool != AnnotationType.Selection)
 				ViewModel.DeselectAll();
+		}
+	}
+
+	// Öffnet das ContextMenu des Mehr-Buttons bei Linksklick
+	private void MoreButton_Click(object sender, RoutedEventArgs e)
+	{
+		if (sender is FrameworkElement fe)
+		{
+			var cm = fe.ContextMenu;
+			if (cm != null)
+			{
+				cm.PlacementTarget = fe;
+				cm.Placement = PlacementMode.Bottom;
+				cm.DataContext = DataContext; // damit Bindings funktionieren
+				cm.IsOpen = true;
+			}
 		}
 	}
 }
