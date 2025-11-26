@@ -501,7 +501,7 @@
                   HorizontalScrollBarVisibility="Auto"
                   VerticalScrollBarVisibility="Auto">
       <Grid>
-        <TextBlock Text="📸 Drücken Sie Strg+D oder wählen Sie eine Aufnahmeoption"
+        <TextBlock Text="📸 Drücken Sie 'Druck' oder wählen Sie eine Aufnahmeoption"
                           HorizontalAlignment="Center"
                           VerticalAlignment="Center"
                           FontSize="18"
