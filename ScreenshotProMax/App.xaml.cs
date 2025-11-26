@@ -1,3 +1,4 @@
+using System;
 using ScreenshotProMax.Services;
 using ScreenshotProMax.Views;
 using ScreenshotProMax.Localization;
@@ -16,11 +17,16 @@ public partial class App : Application
 {
     private NotifyIcon? _notifyIcon;
     private bool _isExit;
+    private HotkeyService? _hotkey_service;
     private HotkeyService? _hotkeyService;
+    private HwndSource? _hwndSource;
     public static LocalizedStrings Loc { get; private set; } = new LocalizedStrings();
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        // Prevent WPF from shutting down when windows close; we'll control shutdown explicitly
+        ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
         // Set culture from saved settings
         var culture = Settings.Default.CultureLang;
         if (!string.IsNullOrEmpty(culture))
@@ -37,6 +43,7 @@ public partial class App : Application
         Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = new System.Uri(baseUri) });
 
         base.OnStartup(e);
+
         SetupTrayIcon();
         RegisterGlobalHotkey();
     }
@@ -102,18 +109,22 @@ public partial class App : Application
 
     private void RegisterGlobalHotkey()
     {
-        var helperWindow = new Window { Width = 0, Height = 0, ShowInTaskbar = false, WindowStyle = WindowStyle.ToolWindow, Visibility = Visibility.Hidden };
-        helperWindow.Loaded += (_, _) =>
+        // Create a hidden message window (HwndSource) to register a global hotkey without showing any WPF Window
+        var parameters = new HwndSourceParameters("HotkeyMessageWindow")
         {
-            _hotkey_service_Register(helperWindow);
+            Width = 0,
+            Height = 0,
+            PositionX = 0,
+            PositionY = 0,
+            ParentWindow = IntPtr.Zero,
+            WindowStyle = unchecked((int)0x80000000) // WS_POPUP
         };
-        helperWindow.Show();
-    }
 
-    private void _hotkey_service_Register(Window helperWindow)
-    {
+        _hwndSource = new HwndSource(parameters);
+        _hwndSource.AddHook(WndProc);
+
         _hotkeyService = new HotkeyService();
-        var handle = new WindowInteropHelper(helperWindow).Handle;
+        var handle = _hwndSource.Handle;
         if (_hotkeyService.RegisterHotkey(handle, ModifierKeys.Control, Key.D))
         {
             _hotkeyService.HotkeyPressed += (_, _) => TriggerRegionCapture();
@@ -122,6 +133,7 @@ public partial class App : Application
 
     private async void TriggerRegionCapture()
     {
+        // Minimize main window if visible
         if (Current.MainWindow is Window mw)
         {
             mw.WindowState = WindowState.Minimized;
@@ -154,6 +166,17 @@ public partial class App : Application
             _notifyIcon.Visible = false;
             _notifyIcon.Dispose();
         }
+        if (_hwndSource != null)
+        {
+            _hwndSource.RemoveHook(WndProc);
+            _hwndSource.Dispose();
+        }
         base.OnExit(e);
+    }
+
+    private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    {
+        // Forward to HotkeyService window message processing if needed
+        return IntPtr.Zero;
     }
 }

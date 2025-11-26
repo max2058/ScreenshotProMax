@@ -1,8 +1,7 @@
 <Application x:Class="ScreenshotProMax.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:loc="clr-namespace:ScreenshotProMax.Localization"
-             StartupUri="Views/MainWindow.xaml">
+             xmlns:loc="clr-namespace:ScreenshotProMax.Localization">
     <Application.Resources>
         <ResourceDictionary>
             <loc:LocalizedStrings x:Key="Loc"/>
