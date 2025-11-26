@@ -5,14 +5,37 @@
         WindowStyle="None"
         WindowState="Normal"
         AllowsTransparency="True"
-        Background="#40000000"
+        Background="#01000000"
         Topmost="True"
         ShowInTaskbar="False"
         Cursor="Cross"
-        MouseMove="Window_MouseMove"
         MouseDown="Window_MouseDown"
         KeyDown="Window_KeyDown"
         Focusable="True"
-        ResizeMode="NoResize">
-    <Canvas x:Name="HighlightCanvas" ClipToBounds="False" />
+        ResizeMode="NoResize"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True">
+    <Grid Background="Transparent">
+        <Canvas x:Name="HighlightCanvas" 
+                ClipToBounds="False"
+                Background="Transparent"
+                IsHitTestVisible="False" />
+        
+        <Border HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Margin="0,20,0,0"
+                Background="#DD000000"
+                CornerRadius="8"
+                Padding="16,8"
+                IsHitTestVisible="False">
+            <TextBlock x:Name="InstructionText"
+                       FontSize="14"
+                       FontWeight="SemiBold"
+                       Foreground="White">
+                <TextBlock.Effect>
+                    <DropShadowEffect Color="Black" ShadowDepth="0" BlurRadius="8" Opacity="0.6"/>
+                </TextBlock.Effect>
+            </TextBlock>
+        </Border>
+    </Grid>
 </Window>

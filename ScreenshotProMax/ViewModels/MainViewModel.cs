@@ -96,17 +96,57 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private async Task CaptureActiveWindowAsync()
     {
-        // Small delay to allow the overlay to appear
-        await Task.Delay(100);
+        System.Diagnostics.Debug.WriteLine("=== CaptureActiveWindowAsync started ===");
+        
+        // Minimize main window if it's visible
+        if (Application.Current.MainWindow?.WindowState == WindowState.Normal)
+        {
+            Application.Current.MainWindow.WindowState = WindowState.Minimized;
+            System.Diagnostics.Debug.WriteLine("Main window minimized");
+        }
+
+        // Small delay to allow the main window to minimize
+        await Task.Delay(150);
         
         // Show window selector overlay
+        System.Diagnostics.Debug.WriteLine("Showing WindowSelectorWindow");
         var windowSelector = new WindowSelectorWindow();
-        if (windowSelector.ShowDialog() == true && windowSelector.SelectedWindowRect.HasValue)
+        var result = windowSelector.ShowDialog();
+        
+        System.Diagnostics.Debug.WriteLine($"WindowSelectorWindow closed with result: {result}");
+        System.Diagnostics.Debug.WriteLine($"SelectedWindowRect: {windowSelector.SelectedWindowRect}");
+        
+        if (result == true && windowSelector.SelectedWindowRect.HasValue)
         {
             var rect = windowSelector.SelectedWindowRect.Value;
+            System.Diagnostics.Debug.WriteLine($"Capturing region: X={rect.X}, Y={rect.Y}, W={rect.Width}, H={rect.Height}");
+            
             CapturedImage = await _screenshotService.CaptureRegionAsync(rect);
+            System.Diagnostics.Debug.WriteLine($"Screenshot captured: {CapturedImage != null}");
+            
             ResetAnnotations();
+
+            // Restore main window
+            if (Application.Current.MainWindow != null)
+            {
+                Application.Current.MainWindow.WindowState = WindowState.Normal;
+                Application.Current.MainWindow.Activate();
+                System.Diagnostics.Debug.WriteLine("Main window restored");
+            }
         }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine("Window selection cancelled or no window selected");
+            
+            // Restore main window even if cancelled
+            if (Application.Current.MainWindow != null)
+            {
+                Application.Current.MainWindow.WindowState = WindowState.Normal;
+                Application.Current.MainWindow.Activate();
+            }
+        }
+        
+        System.Diagnostics.Debug.WriteLine("=== CaptureActiveWindowAsync finished ===");
     }
 
     [RelayCommand]
