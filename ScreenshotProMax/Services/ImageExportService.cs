@@ -64,6 +64,12 @@ public class ImageExportService
             case AnnotationType.Arrow:
                 DrawLineOrArrow(context, annotation, arrow: true);
                 break;
+            case AnnotationType.Rectangle:
+                DrawRectangle(context, annotation);
+                break;
+            case AnnotationType.Ellipse:
+                DrawEllipse(context, annotation);
+                break;
             case AnnotationType.Text:
                 DrawText(context, annotation);
                 break;
@@ -82,7 +88,7 @@ public class ImageExportService
 
         var p1 = annotation.Points[0];
         var p2 = annotation.Points[^1];
-        double thickness = annotation.Thickness * annotation.Scale; // berücksichtige Skalierung
+        double thickness = annotation.Thickness * annotation.Scale; // berücksichtigt Skalierung
         var pen = new Pen(annotation.StrokeBrush, thickness)
         {
             StartLineCap = PenLineCap.Round,
@@ -187,5 +193,71 @@ public class ImageExportService
         double textX = topLeft.X + (boxWidth - formatted.Width) / 2;
         double textY = topLeft.Y + (boxHeight - formatted.Height) / 2 - 1; // leichter optischer Ausgleich
         context.DrawText(formatted, new Point(textX, textY));
+    }
+
+    private static void DrawRectangle(DrawingContext context, AnnotationModel annotation)
+    {
+        if (annotation.Points.Count < 2)
+            return;
+
+        var p1 = annotation.Points[0];
+        var p2 = annotation.Points[1];
+        var rect = new Rect(
+            Math.Min(p1.X, p2.X),
+            Math.Min(p1.Y, p2.Y),
+            Math.Abs(p2.X - p1.X),
+            Math.Abs(p2.Y - p1.Y)
+        );
+
+        Brush? fill = null;
+        Pen? stroke = null;
+
+        switch (annotation.ShapeStyle)
+        {
+            case ShapeStyle.StrokeOnly:
+                stroke = new Pen(annotation.StrokeBrush, annotation.Thickness);
+                break;
+            case ShapeStyle.StrokeAndFill:
+                stroke = new Pen(annotation.StrokeBrush, annotation.Thickness);
+                fill = annotation.FillBrush;
+                break;
+            case ShapeStyle.FillOnly:
+                fill = annotation.FillBrush;
+                break;
+        }
+
+        context.DrawRectangle(fill, stroke, rect);
+    }
+
+    private static void DrawEllipse(DrawingContext context, AnnotationModel annotation)
+    {
+        if (annotation.Points.Count < 2)
+            return;
+
+        var p1 = annotation.Points[0];
+        var p2 = annotation.Points[1];
+        var centerX = (p1.X + p2.X) / 2;
+        var centerY = (p1.Y + p2.Y) / 2;
+        var radiusX = Math.Abs(p2.X - p1.X) / 2;
+        var radiusY = Math.Abs(p2.Y - p1.Y) / 2;
+
+        Brush? fill = null;
+        Pen? stroke = null;
+
+        switch (annotation.ShapeStyle)
+        {
+            case ShapeStyle.StrokeOnly:
+                stroke = new Pen(annotation.StrokeBrush, annotation.Thickness);
+                break;
+            case ShapeStyle.StrokeAndFill:
+                stroke = new Pen(annotation.StrokeBrush, annotation.Thickness);
+                fill = annotation.FillBrush;
+                break;
+            case ShapeStyle.FillOnly:
+                fill = annotation.FillBrush;
+                break;
+        }
+
+        context.DrawEllipse(fill, stroke, new Point(centerX, centerY), radiusX, radiusY);
     }
 }

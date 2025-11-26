@@ -278,6 +278,8 @@ public partial class MainWindow : MetroWindow
 		{
 			case AnnotationType.Line:
 			case AnnotationType.Arrow:
+			case AnnotationType.Rectangle:
+			case AnnotationType.Ellipse:
 				_activeAnnotation.Points.Add(position);
 				_isDrawing = true;
 				break;
@@ -394,6 +396,8 @@ public partial class MainWindow : MetroWindow
 		{
 			case AnnotationType.Line:
 			case AnnotationType.Arrow:
+			case AnnotationType.Rectangle:
+			case AnnotationType.Ellipse:
 				if (_activeAnnotation.Points.Count >= 2)
 				{
 					_activeAnnotation.Points[1] = position;

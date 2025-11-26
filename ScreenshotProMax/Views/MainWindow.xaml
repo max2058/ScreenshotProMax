@@ -18,6 +18,7 @@
   <mah:MetroWindow.Resources>
     <converters:PointsToPointCollectionConverter x:Key="PointsToPointCollectionConverter" />
     <converters:OpacityToPercentageConverter x:Key="OpacityToPercentageConverter" />
+    <converters:StringToShapeStyleConverter x:Key="StringToShapeStyleConverter" />
 
     <Style TargetType="Button" x:Key="ToolbarButton" BasedOn="{StaticResource MahApps.Styles.Button}">
       <Setter Property="Height" Value="36" />
@@ -318,7 +319,57 @@
             <iconPacks:PackIconMaterial Kind="Numeric1CircleOutline" />
           </Button>
 
-          <Separator Style="{StaticResource Local.VerticalSeparator}" Height="10" Width="30"/>
+          <!-- Rectangle Tool -->
+          <Button Tag="Rectangle" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Rechteck">
+            <Button.Template>
+              <ControlTemplate TargetType="Button">
+                <Grid>
+                  <Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="4">
+                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Border>
+                  <Rectangle x:Name="SelectedBar" Height="3" VerticalAlignment="Bottom" Fill="{DynamicResource MahApps.Brushes.Accent}" Visibility="Collapsed" RadiusX="2" RadiusY="2" />
+                </Grid>
+                <ControlTemplate.Triggers>
+                  <DataTrigger Binding="{Binding CurrentTool}" Value="Rectangle">
+                    <Setter TargetName="Chrome" Property="Background" Value="#FFE4E9F2" />
+                    <Setter TargetName="Chrome" Property="BorderBrush" Value="#FFB5C3D1" />
+                    <Setter TargetName="SelectedBar" Property="Visibility" Value="Visible" />
+                  </DataTrigger>
+                  <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Chrome" Property="Background" Value="#11000000" />
+                    <Setter TargetName="Chrome" Property="BorderBrush" Value="#33000000" />
+                  </Trigger>
+                </ControlTemplate.Triggers>
+              </ControlTemplate>
+            </Button.Template>
+            <iconPacks:PackIconMaterial Kind="RectangleOutline" />
+          </Button>
+
+          <!-- Ellipse Tool -->
+          <Button Tag="Ellipse" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Kreis/Ellipse">
+            <Button.Template>
+              <ControlTemplate TargetType="Button">
+                <Grid>
+                  <Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="4">
+                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Border>
+                  <Rectangle x:Name="SelectedBar" Height="3" VerticalAlignment="Bottom" Fill="{DynamicResource MahApps.Brushes.Accent}" Visibility="Collapsed" RadiusX="2" RadiusY="2" />
+                </Grid>
+                <ControlTemplate.Triggers>
+                  <DataTrigger Binding="{Binding CurrentTool}" Value="Ellipse">
+                    <Setter TargetName="Chrome" Property="Background" Value="#FFE4E9F2" />
+                    <Setter TargetName="Chrome" Property="BorderBrush" Value="#FFB5C3D1" />
+                    <Setter TargetName="SelectedBar" Property="Visibility" Value="Visible" />
+                  </DataTrigger>
+                  <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Chrome" Property="Background" Value="#11000000" />
+                    <Setter TargetName="Chrome" Property="BorderBrush" Value="#33000000" />
+                  </Trigger>
+                </ControlTemplate.Triggers>
+              </ControlTemplate>
+            </Button.Template>
+            <iconPacks:PackIconMaterial Kind="EllipseOutline" />
+          </Button>
 
           <!-- Selection Tool (noch nicht implementiert) -->
           <Button Tag="Selection" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Auswahl (noch ohne Funktion)">
@@ -367,8 +418,36 @@
 
         <!-- Color -->
         <StackPanel Orientation="Horizontal" Margin="0,0,5,0">
-          <mah:ColorPicker SelectedColor="{Binding CurrentColor, Mode=TwoWay}"
-                           Background="Transparent" />
+          <mah:ColorPicker SelectedColor="{Binding CurrentColor, Mode=TwoWay}" />
+        </StackPanel>
+
+        <!-- Shape Style (nur sichtbar bei Rechteck/Kreis) -->
+        <StackPanel Orientation="Horizontal" Margin="0,0,5,0">
+          <StackPanel.Style>
+            <Style TargetType="StackPanel">
+              <Setter Property="Visibility" Value="Collapsed" />
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding CurrentTool}" Value="Rectangle">
+                  <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding CurrentTool}" Value="Ellipse">
+                  <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </StackPanel.Style>
+          <TextBlock Text="Stil:" 
+                     VerticalAlignment="Center" 
+                     Margin="0,0,6,0"
+                     FontSize="13"/>
+          <ComboBox Width="140" 
+                    SelectedIndex="0"
+                    SelectedValue="{Binding CurrentShapeStyle, Mode=TwoWay, Converter={StaticResource StringToShapeStyleConverter}}"
+                    SelectedValuePath="Tag">
+            <ComboBoxItem Content="Nur Rahmen" Tag="StrokeOnly" />
+            <ComboBoxItem Content="Rahmen + Füllung" Tag="StrokeAndFill" />
+            <ComboBoxItem Content="Nur Füllung" Tag="FillOnly" />
+          </ComboBox>
         </StackPanel>
 
         <!-- Thickness -->
@@ -535,10 +614,118 @@
                               <DataTrigger Binding="{Binding Type}" Value="Text">
                                 <Setter Property="Visibility" Value="Collapsed" />
                               </DataTrigger>
+                              <DataTrigger Binding="{Binding Type}" Value="Rectangle">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                              </DataTrigger>
+                              <DataTrigger Binding="{Binding Type}" Value="Ellipse">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                              </DataTrigger>
                             </Style.Triggers>
                           </Style>
                         </Line.Style>
                       </Line>
+
+                      <!-- Rectangle Shape -->
+                      <Rectangle Canvas.Left="{Binding ShapeBounds.X}"
+                                 Canvas.Top="{Binding ShapeBounds.Y}"
+                                 Width="{Binding ShapeBounds.Width}"
+                                 Height="{Binding ShapeBounds.Height}">
+                        <Rectangle.Style>
+                          <Style TargetType="Rectangle">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                              <DataTrigger Binding="{Binding Type}" Value="Rectangle">
+                                <Setter Property="Visibility" Value="Visible" />
+                              </DataTrigger>
+                              <!-- Nur Rahmen -->
+                              <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                  <Condition Binding="{Binding Type}" Value="Rectangle"/>
+                                  <Condition Binding="{Binding ShapeStyle}" Value="StrokeOnly"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Stroke" Value="{Binding StrokeBrush}" />
+                                <Setter Property="StrokeThickness" Value="{Binding Thickness}" />
+                                <Setter Property="Fill" Value="Transparent" />
+                              </MultiDataTrigger>
+                              <!-- Rahmen + Füllung -->
+                              <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                  <Condition Binding="{Binding Type}" Value="Rectangle"/>
+                                  <Condition Binding="{Binding ShapeStyle}" Value="StrokeAndFill"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Stroke" Value="{Binding StrokeBrush}" />
+                                <Setter Property="StrokeThickness" Value="{Binding Thickness}" />
+                                <Setter Property="Fill" Value="{Binding FillBrush}" />
+                              </MultiDataTrigger>
+                              <!-- Nur Füllung -->
+                              <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                  <Condition Binding="{Binding Type}" Value="Rectangle"/>
+                                  <Condition Binding="{Binding ShapeStyle}" Value="FillOnly"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Stroke" Value="Transparent" />
+                                <Setter Property="StrokeThickness" Value="0" />
+                                <Setter Property="Fill" Value="{Binding FillBrush}" />
+                              </MultiDataTrigger>
+                              <!-- Highlight wenn ausgewählt -->
+                              <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                <Setter Property="StrokeDashArray" Value="4,2" />
+                              </DataTrigger>
+                            </Style.Triggers>
+                          </Style>
+                        </Rectangle.Style>
+                      </Rectangle>
+
+                      <!-- Ellipse Shape -->
+                      <Ellipse Canvas.Left="{Binding ShapeBounds.X}"
+                               Canvas.Top="{Binding ShapeBounds.Y}"
+                               Width="{Binding ShapeBounds.Width}"
+                               Height="{Binding ShapeBounds.Height}">
+                        <Ellipse.Style>
+                          <Style TargetType="Ellipse">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                              <DataTrigger Binding="{Binding Type}" Value="Ellipse">
+                                <Setter Property="Visibility" Value="Visible" />
+                              </DataTrigger>
+                              <!-- Nur Rahmen -->
+                              <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                  <Condition Binding="{Binding Type}" Value="Ellipse"/>
+                                  <Condition Binding="{Binding ShapeStyle}" Value="StrokeOnly"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Stroke" Value="{Binding StrokeBrush}" />
+                                <Setter Property="StrokeThickness" Value="{Binding Thickness}" />
+                                <Setter Property="Fill" Value="Transparent" />
+                              </MultiDataTrigger>
+                              <!-- Rahmen + Füllung -->
+                              <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                  <Condition Binding="{Binding Type}" Value="Ellipse"/>
+                                  <Condition Binding="{Binding ShapeStyle}" Value="StrokeAndFill"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Stroke" Value="{Binding StrokeBrush}" />
+                                <Setter Property="StrokeThickness" Value="{Binding Thickness}" />
+                                <Setter Property="Fill" Value="{Binding FillBrush}" />
+                              </MultiDataTrigger>
+                              <!-- Nur Füllung -->
+                              <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                  <Condition Binding="{Binding Type}" Value="Ellipse"/>
+                                  <Condition Binding="{Binding ShapeStyle}" Value="FillOnly"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Stroke" Value="Transparent" />
+                                <Setter Property="StrokeThickness" Value="0" />
+                                <Setter Property="Fill" Value="{Binding FillBrush}" />
+                              </MultiDataTrigger>
+                              <!-- Highlight wenn ausgewählt -->
+                              <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                <Setter Property="StrokeDashArray" Value="4,2" />
+                              </DataTrigger>
+                            </Style.Triggers>
+                          </Style>
+                        </Ellipse.Style>
+                      </Ellipse>
 
                       <!-- Number Badge -->
                       <Border Background="{Binding FillBrush}" 

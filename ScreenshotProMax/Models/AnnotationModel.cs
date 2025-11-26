@@ -12,8 +12,17 @@ public enum AnnotationType
     Text,
     Line,
     Arrow,
+    Rectangle,
+    Ellipse,
     Selection,
     Eraser
+}
+
+public enum ShapeStyle
+{
+    StrokeOnly,      // Nur Rahmen
+    StrokeAndFill,   // Rahmen und Füllung
+    FillOnly         // Nur Füllung
 }
 
 public partial class AnnotationModel : ObservableObject
@@ -45,6 +54,9 @@ public partial class AnnotationModel : ObservableObject
     [ObservableProperty]
     private double scale = 1.0;
 
+    [ObservableProperty]
+    private ShapeStyle shapeStyle = ShapeStyle.StrokeOnly;
+
     public AnnotationModel()
     {
         // Reagiere auf Änderungen der Points-Collection
@@ -54,6 +66,7 @@ public partial class AnnotationModel : ObservableObject
             OnPropertyChanged(nameof(ArrowHeadTip));
             OnPropertyChanged(nameof(ArrowHeadLeft));
             OnPropertyChanged(nameof(ArrowHeadRight));
+            OnPropertyChanged(nameof(ShapeBounds));
         };
     }
 
@@ -276,5 +289,25 @@ public partial class AnnotationModel : ObservableObject
     {
         var bounds = GetBounds();
         return bounds.Contains(point);
+    }
+
+    // Für Rechteck und Ellipse: Berechne Bounds aus zwei Punkten
+    public Rect ShapeBounds
+    {
+        get
+        {
+            if (Points.Count < 2)
+                return Rect.Empty;
+
+            var p1 = Points[0];
+            var p2 = Points[1];
+
+            return new Rect(
+                System.Math.Min(p1.X, p2.X),
+                System.Math.Min(p1.Y, p2.Y),
+                System.Math.Abs(p2.X - p1.X),
+                System.Math.Abs(p2.Y - p1.Y)
+            );
+        }
     }
 }

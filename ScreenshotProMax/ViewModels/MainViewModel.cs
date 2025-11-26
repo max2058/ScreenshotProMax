@@ -66,6 +66,9 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private AnnotationModel? selectedAnnotation;
 
+    [ObservableProperty]
+    private ShapeStyle currentShapeStyle = ShapeStyle.StrokeOnly;
+
     public bool HasImage => CapturedImage != null;
     public bool CanUndo => _undoStack.Count > 0;
     public bool CanRedo => _redoStack.Count > 0;
@@ -204,7 +207,8 @@ public partial class MainViewModel : ObservableObject
             Type = CurrentTool,
             Color = CurrentColor,
             Thickness = CurrentThickness,
-            Opacity = CurrentOpacity
+            Opacity = CurrentOpacity,
+            ShapeStyle = CurrentShapeStyle
         };
 
         if (CurrentTool == AnnotationType.Number)
