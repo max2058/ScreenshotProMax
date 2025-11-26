@@ -12,6 +12,7 @@ using ScreenshotProMax.Views;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Diagnostics;
 
 namespace ScreenshotProMax.ViewModels;
 
@@ -69,6 +70,9 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private ShapeStyle currentShapeStyle = ShapeStyle.StrokeOnly;
 
+    [ObservableProperty]
+    private bool isSettingsFlyoutOpen;
+
     public bool HasImage => CapturedImage != null;
     public bool CanUndo => _undoStack.Count > 0;
     public bool CanRedo => _redoStack.Count > 0;
@@ -79,6 +83,35 @@ public partial class MainViewModel : ObservableObject
         SaveCommand.NotifyCanExecuteChanged();
         ClearAnnotationsCommand.NotifyCanExecuteChanged();
         CopyToClipboardCommand.NotifyCanExecuteChanged();
+    }
+
+    [RelayCommand]
+    private void OpenSetFlyOut()
+    {
+        IsSettingsFlyoutOpen = true;
+    }
+
+    [RelayCommand]
+    private void CloseSettingsFlyOut()
+    {
+        IsSettingsFlyoutOpen = false;
+    }
+
+    [RelayCommand]
+    private void NewIssue()
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://github.com/max2058/ScreenshotProMax/issues/new",
+                UseShellExecute = true
+            });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Fehler beim Öffnen des Browsers: {ex.Message}");
+        }
     }
 
     [RelayCommand]

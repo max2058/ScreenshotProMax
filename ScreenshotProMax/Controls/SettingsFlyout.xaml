@@ -1,0 +1,75 @@
+﻿<UserControl x:Class="ScreenshotProMax.Controls.SettingsFlyout"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:local="clr-namespace:ScreenshotProMax.Controls"
+             xmlns:viewModels="clr-namespace:ScreenshotProMax.ViewModels"
+             mc:Ignorable="d">
+
+  <UserControl.DataContext>
+    <viewModels:SettingsFlyoutViewModel/>
+  </UserControl.DataContext>
+
+  <!-- Ressourcen -->
+  <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="BoolConverter"/>
+
+    <Style x:Key="AppThemeMenuItemStyle"
+              BasedOn="{StaticResource MahApps.Styles.MenuItem}"
+              TargetType="{x:Type MenuItem}">
+      <Setter Property="Header" Value="{Binding DisplayName, Mode=OneWay}" />
+    </Style>
+
+  </UserControl.Resources>
+
+  <!-- Eigendlicher Inhalt des Settingsflyout -->
+  <StackPanel Margin="20,0,20,20">
+    <Label Content="Sprache" FontWeight="Bold" FontSize="20"/>
+
+    <mah:SplitButton HorizontalContentAlignment="Left" ItemsSource="{Binding SupportedCultures}"
+                         SelectedItem="{Binding SelectedCulture}" DisplayMemberPath="DisplayName">
+      <mah:SplitButton.Icon>
+        <iconPacks:PackIconMaterial Kind="Earth" Margin="5,0,10,0"/>
+      </mah:SplitButton.Icon>
+
+      <i:Interaction.Triggers>
+        <i:EventTrigger EventName="SelectionChanged">
+          <i:InvokeCommandAction Command="{Binding LangSplBtnSelectionChangedCommand}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="PreviewMouseDown">
+          <i:InvokeCommandAction Command="{Binding PreviewMouseDownCommand}"/>
+        </i:EventTrigger>
+      </i:Interaction.Triggers>
+    </mah:SplitButton>
+
+    <Label Content="Design" FontWeight="Bold" Margin="0,10,0,0" FontSize="20"/>
+
+    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
+      <mah:ToggleSwitch IsOn="{Binding IsDarkTheme, Mode=TwoWay}" Width="120" VerticalAlignment="Center" ToolTip="Design (Tag/Nacht)">
+        <mah:ToggleSwitch.Content>
+          <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <iconPacks:PackIconMaterial Kind="WeatherSunny" Width="20" Height="20" Visibility="{Binding IsDarkTheme, Converter={StaticResource BoolConverter}, ConverterParameter=False}" />
+            <iconPacks:PackIconMaterial Kind="WeatherNight" Width="20" Height="20" Visibility="{Binding IsDarkTheme, Converter={StaticResource BoolConverter}}" />
+            <TextBlock Text="  " />
+            <TextBlock VerticalAlignment="Center" Text="Modus"/>
+          </StackPanel>
+        </mah:ToggleSwitch.Content>
+      </mah:ToggleSwitch>
+    </StackPanel>
+
+    <StackPanel Margin="0,5,0,0">
+      <Label Content="App Informationen" FontWeight="Bold" FontSize="20"/>
+
+      <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+        <Label Content="Version:"/>
+        <Label Content="{Binding AppVersion}"/>
+      </StackPanel>
+    </StackPanel>
+
+  </StackPanel>
+
+</UserControl>
