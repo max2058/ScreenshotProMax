@@ -84,24 +84,29 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private async Task CaptureAsync()
     {
-        CapturedImage = await _screenshotService.CapturePrimaryScreenAsync();
-        ResetAnnotations();
-    }
-
-    [RelayCommand]
-    private async Task CaptureAllScreensAsync()
-    {
-        CapturedImage = await _screenshotService.CaptureAllScreensAsync();
-        ResetAnnotations();
+        // Show screen selector overlay
+        var screenSelector = new ScreenSelectorWindow();
+        if (screenSelector.ShowDialog() == true && screenSelector.SelectedScreen != null)
+        {
+            CapturedImage = await _screenshotService.CaptureScreenAsync(screenSelector.SelectedScreen);
+            ResetAnnotations();
+        }
     }
 
     [RelayCommand]
     private async Task CaptureActiveWindowAsync()
     {
-        // Small delay to allow the window to become active
+        // Small delay to allow the overlay to appear
         await Task.Delay(100);
-        CapturedImage = await _screenshotService.CaptureActiveWindowAsync();
-        ResetAnnotations();
+        
+        // Show window selector overlay
+        var windowSelector = new WindowSelectorWindow();
+        if (windowSelector.ShowDialog() == true && windowSelector.SelectedWindowRect.HasValue)
+        {
+            var rect = windowSelector.SelectedWindowRect.Value;
+            CapturedImage = await _screenshotService.CaptureRegionAsync(rect);
+            ResetAnnotations();
+        }
     }
 
     [RelayCommand]

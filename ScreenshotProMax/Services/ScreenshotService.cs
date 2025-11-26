@@ -1,6 +1,5 @@
 using System;
 using System.Drawing;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
@@ -20,33 +19,6 @@ namespace ScreenshotProMax.Services
         public Task<BitmapSource> CapturePrimaryScreenAsync()
         {
             return CaptureScreenAsync(System.Windows.Forms.Screen.PrimaryScreen);
-        }
-
-        public Task<BitmapSource> CaptureAllScreensAsync()
-        {
-            return Task.Run(() =>
-            {
-                var screens = System.Windows.Forms.Screen.AllScreens;
-                if (screens.Length == 0)
-                    throw new InvalidOperationException("No screens found.");
-
-                // Calculate total bounds
-                int minX = screens.Min(s => s.Bounds.X);
-                int minY = screens.Min(s => s.Bounds.Y);
-                int maxX = screens.Max(s => s.Bounds.X + s.Bounds.Width);
-                int maxY = screens.Max(s => s.Bounds.Y + s.Bounds.Height);
-
-                int width = maxX - minX;
-                int height = maxY - minY;
-
-                using var bitmap = new Bitmap(width, height);
-                using (var graphics = System.Drawing.Graphics.FromImage(bitmap))
-                {
-                    graphics.CopyFromScreen(minX, minY, 0, 0, new System.Drawing.Size(width, height), System.Drawing.CopyPixelOperation.SourceCopy);
-                }
-
-                return ConvertBitmapToBitmapSource(bitmap);
-            });
         }
 
         public Task<BitmapSource> CaptureActiveWindowAsync()

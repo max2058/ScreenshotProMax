@@ -122,23 +122,16 @@
             </Button>
             <Button Style="{StaticResource ToolbarButton}" 
                             Command="{Binding CaptureActiveWindowCommand}" 
-                            ToolTip="Aktives Fenster aufnehmen">
+                            ToolTip="Fenster durch Anklicken auswählen">
               <StackPanel Orientation="Horizontal">
                 <iconPacks:PackIconMaterial Kind="WindowMaximize"/>
               </StackPanel>
             </Button>
             <Button Style="{StaticResource ToolbarButton}" 
                             Command="{Binding CaptureCommand}" 
-                            ToolTip="Primären Bildschirm aufnehmen">
+                            ToolTip="Bildschirm auswählen und aufnehmen">
               <StackPanel Orientation="Horizontal">
                 <iconPacks:PackIconMaterial Kind="Monitor"/>
-              </StackPanel>
-            </Button>
-            <Button Style="{StaticResource ToolbarButton}" 
-                            Command="{Binding CaptureAllScreensCommand}" 
-                            ToolTip="Alle Bildschirme aufnehmen">
-              <StackPanel Orientation="Horizontal">
-                <iconPacks:PackIconMaterial Kind="MonitorMultiple"/>
               </StackPanel>
             </Button>
           </StackPanel>
