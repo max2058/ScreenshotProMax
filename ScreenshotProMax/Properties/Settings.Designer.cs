@@ -70,5 +70,17 @@ namespace ScreenshotProMax.Properties {
                 this["IsDefaultScreenshotApp"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsInitialSetupCompleted {
+            get {
+                return ((bool)(this["IsInitialSetupCompleted"]));
+            }
+            set {
+                this["IsInitialSetupCompleted"] = value;
+            }
+        }
     }
 }

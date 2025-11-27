@@ -30,8 +30,26 @@ namespace ScreenshotProMax.Services
 
             if (_source != null)
             {
+                // Stelle sicher, dass der Hotkey nicht bereits registriert ist
+                if (_isPrintScreenRegistered)
+                {
+                    UnregisterPrintScreenHotkey();
+                }
+
                 // VK_SNAPSHOT = 0x2C (Print Screen)
-                _isPrintScreenRegistered = NativeMethods.RegisterHotKey(_windowHandle, HOTKEY_ID_PRINT_SCREEN, 0, 0x2C);
+                // MOD_NOREPEAT = 0x4000 verhindert wiederholte Nachrichten
+                _isPrintScreenRegistered = NativeMethods.RegisterHotKey(_windowHandle, HOTKEY_ID_PRINT_SCREEN, 0x4000, 0x2C);
+                
+                if (_isPrintScreenRegistered)
+                {
+                    System.Diagnostics.Debug.WriteLine("Print Screen Hotkey erfolgreich registriert");
+                }
+                else
+                {
+                    var error = Marshal.GetLastWin32Error();
+                    System.Diagnostics.Debug.WriteLine($"Fehler beim Registrieren des Print Screen Hotkeys: {error}");
+                }
+                
                 return _isPrintScreenRegistered;
             }
 
@@ -42,7 +60,18 @@ namespace ScreenshotProMax.Services
         {
             if (_isPrintScreenRegistered && _windowHandle != IntPtr.Zero)
             {
-                NativeMethods.UnregisterHotKey(_windowHandle, HOTKEY_ID_PRINT_SCREEN);
+                var result = NativeMethods.UnregisterHotKey(_windowHandle, HOTKEY_ID_PRINT_SCREEN);
+                
+                if (result)
+                {
+                    System.Diagnostics.Debug.WriteLine("Print Screen Hotkey erfolgreich deregistriert");
+                }
+                else
+                {
+                    var error = Marshal.GetLastWin32Error();
+                    System.Diagnostics.Debug.WriteLine($"Fehler beim Deregistrieren des Print Screen Hotkeys: {error}");
+                }
+                
                 _isPrintScreenRegistered = false;
             }
         }
@@ -63,6 +92,7 @@ namespace ScreenshotProMax.Services
                 int hotkeyId = wParam.ToInt32();
                 if (hotkeyId == HOTKEY_ID_PRINT_SCREEN)
                 {
+                    System.Diagnostics.Debug.WriteLine("Print Screen Hotkey erkannt - löse Event aus");
                     HotkeyPressed?.Invoke(this, EventArgs.Empty);
                     handled = true;
                 }
