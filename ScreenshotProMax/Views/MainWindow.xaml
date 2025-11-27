@@ -221,7 +221,7 @@
                   <iconPacks:PackIconMaterial Kind="CogOutline" Width="16" Height="16"/>
                 </MenuItem.Icon>
               </MenuItem>
-              <MenuItem Header="Über Screenshot Pro Max" Command="{Binding OpenAboutCommand}">
+              <MenuItem IsEnabled="False" Header="Über Screenshot Pro Max" Command="{Binding OpenAboutCommand}">
                 <MenuItem.Icon>
                   <iconPacks:PackIconMaterial Kind="InformationOutline" Width="16" Height="16"/>
                 </MenuItem.Icon>

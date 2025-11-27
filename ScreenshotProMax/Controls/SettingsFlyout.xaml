@@ -65,7 +65,7 @@
       <Run Text="Für diese Einstellung muss die App einmalig mit erhöten Administratorrechten gestartet werden!" FontWeight="Bold"/>
     </TextBlock>
 
-      <StackPanel Orientation="Horizontal">
+      <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
         <Label Content="{Binding AppVersionText, Source={x:Static app:App.Loc}}"/>
         <Label Content="{Binding AppVersion}"/>
       </StackPanel>
