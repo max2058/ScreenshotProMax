@@ -6,10 +6,11 @@
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
                  xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                  xmlns:controls="clr-namespace:ScreenshotProMax.Controls"
+                 xmlns:app="clr-namespace:ScreenshotProMax"
                  mc:Ignorable="d"
                  Title="ScreenshotProMax - Willkommen"
                  Height="750"
-                 Width="600"
+                 Width="540"
                  ResizeMode="NoResize"
                  WindowStartupLocation="CenterScreen"
                  ShowMinButton="False"
@@ -35,32 +36,25 @@
                  FontSize="14"
                  Foreground="White"
                  HorizontalAlignment="Center"
-                 Margin="20,0,20,15"
+                 Margin="20,0,20,20"
                  TextWrapping="Wrap"
                  TextAlignment="Center"/>
     </StackPanel>
 
     <!-- Settings Content -->
-    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="20,0,20,0">
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="10,0,10,0">
       <StackPanel>
-        <TextBlock Text="Einstellungen" FontSize="18" FontWeight="Bold" Margin="0,0,0,15"/>
+        <Label Content="{Binding SettFlyHeader, Source={x:Static app:App.Loc}, Mode=OneWay}" FontSize="25" FontWeight="Bold"/>
         <controls:SettingsFlyout x:Name="SettingsControl"/>
 
         <!-- Additional Welcome Text -->
         <Border Background="{DynamicResource MahApps.Brushes.Gray10}"
                 CornerRadius="5"
-                Padding="15"
-                Margin="0,20,0,0">
+                Padding="15">
           <StackPanel>
-            <TextBlock Text="Wichtige Hinweise:" FontWeight="Bold" FontSize="14" Margin="0,0,0,10"/>
+            <TextBlock Text="Wichtiger Hinweis:" FontWeight="Bold" FontSize="14" Margin="0,0,0,10"/>
             <TextBlock TextWrapping="Wrap" FontSize="12" Margin="0,0,0,5">
-              &#8226; Die Sprache kann jederzeit in den Einstellungen ge&#228;ndert werden
-            </TextBlock>
-            <TextBlock TextWrapping="Wrap" FontSize="12" Margin="0,0,0,5">
-              &#8226; Der Dark/Light-Modus kann ebenfalls sp&#228;ter angepasst werden
-            </TextBlock>
-            <TextBlock TextWrapping="Wrap" FontSize="12">
-              &#8226; Die Standard-Screenshot-App Einstellung kann Sie beim Arbeiten unterst&#252;tzen
+              Die Sprache, Dark/Light-Modus, Standard-Screenshot-App Einstellung kann jederzeit in den Einstellungen ge&#228;ndert werden
             </TextBlock>
           </StackPanel>
         </Border>

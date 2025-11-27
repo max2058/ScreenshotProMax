@@ -489,5 +489,25 @@ namespace ScreenshotProMax.Services
 			Settings.Default.Save();
 			return true;
 		}
+
+		/// <summary>
+		/// Setzt alle Benutzereinstellungen auf die Standardwerte zurück
+		/// </summary>
+		/// <returns>True wenn das Zurücksetzen erfolgreich war</returns>
+		public bool ResetAllUserSettings()
+		{
+			try
+			{
+				Settings.Default.Reset();
+				Settings.Default.Save();
+				System.Diagnostics.Debug.WriteLine("Alle Benutzereinstellungen wurden zurückgesetzt");
+				return true;
+			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Debug.WriteLine($"Fehler beim Zurücksetzen der Benutzereinstellungen: {ex.Message}");
+				return false;
+			}
+		}
 	}
 }

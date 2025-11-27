@@ -18,5 +18,16 @@ namespace ScreenshotProMax.Testing
             settingsService.SetInitialSetupCompleted(false);
             Console.WriteLine("Initial setup flag has been reset. The setup window will appear on next startup.");
         }
+
+        /// <summary>
+        /// Resets all user settings to their default values
+        /// This is useful for testing with completely clean settings
+        /// </summary>
+        public static void ResetAllSettings()
+        {
+            var settingsService = new SettingsService();
+            settingsService.ResetAllUserSettings();
+            Console.WriteLine("All user settings have been reset to defaults.");
+        }
     }
 }
