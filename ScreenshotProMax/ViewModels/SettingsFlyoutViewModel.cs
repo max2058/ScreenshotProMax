@@ -30,7 +30,10 @@ namespace ScreenshotProMax.ViewModels
             // Lade aktuelle Sprache
             SelectedCulture = _settingsService.GetAppLanguage();
 
-            // Reagiere auf Property-Änderungen (insbesondere IsDarkTheme)
+            // Lade Standard-Screenshot-App Einstellung
+            IsDefaultScreenshotApp = _settingsService.GetIsDefaultScreenshotApp();
+
+            // Reagiere auf Property-Änderungen
             PropertyChanged += SettingsFlyoutViewModel_PropertyChanged;
         }
 
@@ -42,6 +45,9 @@ namespace ScreenshotProMax.ViewModels
 
         [ObservableProperty]
         private bool isDarkTheme;
+
+        [ObservableProperty]
+        private bool isDefaultScreenshotApp;
 
         [ObservableProperty]
         private string appVersion = string.Empty;
@@ -63,6 +69,16 @@ namespace ScreenshotProMax.ViewModels
                 var theme = IsDarkTheme ? "Dark" : "Light";
                 ThemeManager.Current.ChangeThemeBaseColor(Application.Current, theme);
                 _settingsService.SetAppBaseTheme(theme);
+            }
+            else if (e.PropertyName == nameof(IsDefaultScreenshotApp))
+            {
+                _settingsService.SetIsDefaultScreenshotApp(IsDefaultScreenshotApp);
+                
+                // Benachrichtige die Hauptanwendung über die Änderung
+                if (Application.Current is App app)
+                {
+                    app.UpdatePrintScreenHotkey(IsDefaultScreenshotApp);
+                }
             }
         }
 

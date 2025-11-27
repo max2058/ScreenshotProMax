@@ -68,5 +68,26 @@ namespace ScreenshotProMax.Services
 		{
 			return Settings.Default.MainDesignStyle ?? "Dark";
 		}
+
+		/// <summary>
+		/// Ermittelt ob diese Anwendung als Standard-Screenshot-App gesetzt ist
+		/// </summary>
+		/// <returns>True wenn die Anwendung als Standard gesetzt ist</returns>
+		public bool GetIsDefaultScreenshotApp()
+		{
+			return Settings.Default.IsDefaultScreenshotApp;
+		}
+
+		/// <summary>
+		/// Setzt diese Anwendung als Standard-Screenshot-App oder deaktiviert sie
+		/// </summary>
+		/// <param name="isDefault">True um die Anwendung als Standard zu setzen, False um Windows Standard zu verwenden</param>
+		/// <returns>True wenn die Änderung erfolgreich gespeichert wurde</returns>
+		public bool SetIsDefaultScreenshotApp(bool isDefault)
+		{
+			Settings.Default.IsDefaultScreenshotApp = isDefault;
+			Settings.Default.Save();
+			return true;
+		}
 	}
 }

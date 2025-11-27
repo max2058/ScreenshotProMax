@@ -37,5 +37,18 @@ namespace ScreenshotProMax.Interfaces
 		/// Liefert das aktuell gesetzte Basis-Theme (Light/Dark)
 		/// </summary>
 		string GetAppBaseTheme();
+
+		/// <summary>
+		/// Ermittelt ob diese Anwendung als Standard-Screenshot-App gesetzt ist
+		/// </summary>
+		/// <returns>True wenn die Anwendung als Standard gesetzt ist</returns>
+		bool GetIsDefaultScreenshotApp();
+
+		/// <summary>
+		/// Setzt diese Anwendung als Standard-Screenshot-App oder deaktiviert sie
+		/// </summary>
+		/// <param name="isDefault">True um die Anwendung als Standard zu setzen, False um Windows Standard zu verwenden</param>
+		/// <returns>True wenn die Änderung erfolgreich gespeichert wurde</returns>
+		bool SetIsDefaultScreenshotApp(bool isDefault);
 	}
 }

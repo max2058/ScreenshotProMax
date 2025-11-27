@@ -11,5 +11,8 @@
     <Setting Name="AccentColor" Type="System.String" Scope="User">
       <Value Profile="(Default)">Steel</Value>
     </Setting>
+    <Setting Name="IsDefaultScreenshotApp" Type="System.String" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -8,41 +8,47 @@ namespace ScreenshotProMax.Services
     public class HotkeyService : IDisposable
     {
         private const int WM_HOTKEY = 0x0312;
-        private const int HOTKEY_ID = 9000;
+        private const int HOTKEY_ID_PRINT_SCREEN = 9001;
 
         private IntPtr _windowHandle;
         private HwndSource? _source;
-        private bool _isRegistered;
+        private bool _isPrintScreenRegistered;
 
         public event EventHandler? HotkeyPressed;
 
-        public bool RegisterHotkey(IntPtr windowHandle, ModifierKeys modifiers, Key key)
+        public bool RegisterPrintScreenHotkey(IntPtr windowHandle)
         {
             _windowHandle = windowHandle;
-            _source = HwndSource.FromHwnd(_windowHandle);
+            if (_source == null)
+            {
+                _source = HwndSource.FromHwnd(_windowHandle);
+                if (_source != null)
+                {
+                    _source.AddHook(HwndHook);
+                }
+            }
 
             if (_source != null)
             {
-                _source.AddHook(HwndHook);
-                
-                uint vk = (uint)KeyInterop.VirtualKeyFromKey(key);
-                uint mod = (uint)modifiers;
-
-                _isRegistered = NativeMethods.RegisterHotKey(_windowHandle, HOTKEY_ID, mod, vk);
-                return _isRegistered;
+                // VK_SNAPSHOT = 0x2C (Print Screen)
+                _isPrintScreenRegistered = NativeMethods.RegisterHotKey(_windowHandle, HOTKEY_ID_PRINT_SCREEN, 0, 0x2C);
+                return _isPrintScreenRegistered;
             }
 
             return false;
         }
 
+        public void UnregisterPrintScreenHotkey()
+        {
+            if (_isPrintScreenRegistered && _windowHandle != IntPtr.Zero)
+            {
+                NativeMethods.UnregisterHotKey(_windowHandle, HOTKEY_ID_PRINT_SCREEN);
+                _isPrintScreenRegistered = false;
+            }
+        }
+
         public void UnregisterHotkey()
         {
-            if (_isRegistered && _windowHandle != IntPtr.Zero)
-            {
-                NativeMethods.UnregisterHotKey(_windowHandle, HOTKEY_ID);
-                _isRegistered = false;
-            }
-
             if (_source != null)
             {
                 _source.RemoveHook(HwndHook);
@@ -52,10 +58,14 @@ namespace ScreenshotProMax.Services
 
         private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            if (msg == WM_HOTKEY && wParam.ToInt32() == HOTKEY_ID)
+            if (msg == WM_HOTKEY)
             {
-                HotkeyPressed?.Invoke(this, EventArgs.Empty);
-                handled = true;
+                int hotkeyId = wParam.ToInt32();
+                if (hotkeyId == HOTKEY_ID_PRINT_SCREEN)
+                {
+                    HotkeyPressed?.Invoke(this, EventArgs.Empty);
+                    handled = true;
+                }
             }
 
             return IntPtr.Zero;
@@ -63,6 +73,7 @@ namespace ScreenshotProMax.Services
 
         public void Dispose()
         {
+            UnregisterPrintScreenHotkey();
             UnregisterHotkey();
         }
     }

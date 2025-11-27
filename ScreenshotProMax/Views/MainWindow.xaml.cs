@@ -120,17 +120,17 @@ public partial class MainWindow : MetroWindow
 
 	private void MainWindow_Loaded(object sender, RoutedEventArgs e)
 	{
-		// Register global hotkey Ctrl+D
+		// Register global hotkey: Print Screen only
 		_hotkeyService = new HotkeyService();
 		var handle = new WindowInteropHelper(this).Handle;
 
-		if (_hotkeyService.RegisterHotkey(handle, ModifierKeys.Control, Key.D))
+		if (_hotkeyService.RegisterPrintScreenHotkey(handle))
 		{
 			_hotkeyService.HotkeyPressed += HotkeyService_HotkeyPressed;
 		}
 		else
 		{
-			Console.WriteLine("Hotkey Strg+D konnte nicht registriert werden.");
+			Console.WriteLine("Hotkey Drucktaste konnte nicht registriert werden.");
 		}
 	}
 

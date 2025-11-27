@@ -69,7 +69,7 @@ public partial class App : Application
         };
 
         var menu = new ContextMenuStrip();
-        menu.Items.Add("Screenshot Region (Strg+D)", null, (_, _) => TriggerRegionCapture());
+        menu.Items.Add("Screenshot Region (Drucktaste)", null, (_, _) => TriggerRegionCapture());
         menu.Items.Add("Öffnen", null, (_, _) => ShowMainWindow());
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add("Beenden", null, (_, _) => ExitApplication());
@@ -125,9 +125,32 @@ public partial class App : Application
 
         _hotkeyService = new HotkeyService();
         var handle = _hwndSource.Handle;
-        if (_hotkeyService.RegisterHotkey(handle, ModifierKeys.Control, Key.D))
+        
+        // Registriere nur die Druck-Taste als globalen Hotkey
+        if (_hotkeyService.RegisterPrintScreenHotkey(handle))
         {
             _hotkeyService.HotkeyPressed += (_, _) => TriggerRegionCapture();
+        }
+
+        // Registriere Print Screen when enabled in settings (redundant but keeps logic)
+        if (Settings.Default.IsDefaultScreenshotApp)
+        {
+            _hotkeyService.RegisterPrintScreenHotkey(handle);
+        }
+    }
+
+    public void UpdatePrintScreenHotkey(bool enable)
+    {
+        if (_hotkeyService == null || _hwndSource == null)
+            return;
+
+        if (enable)
+        {
+            _hotkeyService.RegisterPrintScreenHotkey(_hwndSource.Handle);
+        }
+        else
+        {
+            _hotkeyService.UnregisterPrintScreenHotkey();
         }
     }
 

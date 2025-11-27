@@ -46,5 +46,29 @@ namespace ScreenshotProMax.Properties {
                 this["MainDesignStyle"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Steel")]
+        public string AccentColor {
+            get {
+                return ((string)(this["AccentColor"]));
+            }
+            set {
+                this["AccentColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsDefaultScreenshotApp {
+            get {
+                return ((bool)(this["IsDefaultScreenshotApp"]));
+            }
+            set {
+                this["IsDefaultScreenshotApp"] = value;
+            }
+        }
     }
 }

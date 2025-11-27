@@ -50,7 +50,23 @@
       <iconPacks:PackIconMaterial Kind="WeatherNight" Width="20" Height="20" VerticalAlignment="Center" Margin="5,0,0,0"/>
     </StackPanel>
 
-    <StackPanel Margin="0,5,0,0">
+    <Label Content="Screenshot Einstellungen" FontWeight="Bold" Margin="0,20,0,0" FontSize="20"/>
+
+    <!-- Toggle for default screenshot app -->
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,10,0,0">
+      <Label Content="Als Standard-Screenshot-App verwenden" VerticalAlignment="Center" Margin="0,0,10,0"/>
+      <mah:ToggleSwitch IsOn="{Binding IsDefaultScreenshotApp, Mode=TwoWay}" 
+                        ToolTip="Aktiviert die Druck-Taste für Screenshots mit ScreenshotProMax"
+                        OnContent="" OffContent="" Width="40" Height="30" MinWidth="44" Padding="0" />
+    </StackPanel>
+
+    <TextBlock Margin="0,5,0,0" TextWrapping="Wrap" Foreground="Gray" FontSize="11">
+      <Run Text="Wenn aktiviert, wird die Druck-Taste den Bereichsscreenshot von ScreenshotProMax auslösen."/>
+      <LineBreak/>
+      <Run Text="Strg+D wird entfernt; nur die Druck-Taste löst noch Screenshots aus."/>
+    </TextBlock>
+
+    <StackPanel Margin="0,15,0,0">
       <Label Content="{Binding SettFlyAppDetailInfo, Source={x:Static app:App.Loc}}" FontWeight="Bold" FontSize="20"/>
 
       <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
