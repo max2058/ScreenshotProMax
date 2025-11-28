@@ -23,6 +23,7 @@ public partial class MainWindow : MetroWindow
 	private Point _lastMousePosition;
 	private HotkeyService? _hotkeyService;
 	private Cursor? _eraserCursor;
+	private ResizeHandleInfo? _activeHandle;
 
 	private MainViewModel ViewModel => (MainViewModel)DataContext;
 
@@ -161,7 +162,16 @@ public partial class MainWindow : MetroWindow
 		// Strg+C für Copy to Clipboard
 		if (e.Key == Key.C && Keyboard.Modifiers == ModifierKeys.Control && ViewModel.HasImage)
 		{
-			await ViewModel.CopyToClipboardCommand.ExecuteAsync(null);
+			if (ViewModel.SelectedAnnotation != null)
+			{
+				// Kopiere ausgewählte Annotation
+				CopyAnnotationMenuItem_Click(sender, e);
+			}
+			else
+			{
+				// Kopiere gesamtes Bild
+				await ViewModel.CopyToClipboardCommand.ExecuteAsync(null);
+			}
 			e.Handled = true;
 		}
 		// Strg+Z für Undo
@@ -179,14 +189,66 @@ public partial class MainWindow : MetroWindow
 		// Delete-Taste zum Löschen der ausgewählten Annotation
 		else if (e.Key == Key.Delete && ViewModel.SelectedAnnotation != null)
 		{
-			ViewModel.Annotations.Remove(ViewModel.SelectedAnnotation);
-			ViewModel.SelectedAnnotation = null;
+			DeleteAnnotationMenuItem_Click(sender, e);
 			e.Handled = true;
 		}
 		// Escape zum Abbrechen der Auswahl
 		else if (e.Key == Key.Escape)
 		{
 			ViewModel.DeselectAll();
+			e.Handled = true;
+		}
+		// Werkzeug-Shortcuts
+		else if (e.Key == Key.A && Keyboard.Modifiers == ModifierKeys.None)
+		{
+			ViewModel.CurrentTool = AnnotationType.Arrow;
+			e.Handled = true;
+		}
+		else if (e.Key == Key.L && Keyboard.Modifiers == ModifierKeys.None)
+		{
+			ViewModel.CurrentTool = AnnotationType.Line;
+			e.Handled = true;
+		}
+		else if (e.Key == Key.T && Keyboard.Modifiers == ModifierKeys.None)
+		{
+			ViewModel.CurrentTool = AnnotationType.Text;
+			e.Handled = true;
+		}
+		else if (e.Key == Key.N && Keyboard.Modifiers == ModifierKeys.None)
+		{
+			ViewModel.CurrentTool = AnnotationType.Number;
+			e.Handled = true;
+		}
+		else if (e.Key == Key.R && Keyboard.Modifiers == ModifierKeys.None)
+		{
+			ViewModel.CurrentTool = AnnotationType.Rectangle;
+			e.Handled = true;
+		}
+		else if (e.Key == Key.E && Keyboard.Modifiers == ModifierKeys.None)
+		{
+			ViewModel.CurrentTool = AnnotationType.Ellipse;
+			e.Handled = true;
+		}
+		else if (e.Key == Key.S && Keyboard.Modifiers == ModifierKeys.None)
+		{
+			ViewModel.CurrentTool = AnnotationType.Selection;
+			e.Handled = true;
+		}
+		else if (e.Key == Key.D1 && Keyboard.Modifiers == ModifierKeys.Control)
+		{
+			// Strg+1 für 100% Zoom
+			ViewModel.ResetZoom();
+			e.Handled = true;
+		}
+		// Page Up/Down für Z-Order (Vordergrund/Hintergrund)
+		else if (e.Key == Key.PageUp && ViewModel.SelectedAnnotation != null)
+		{
+			BringToFrontMenuItem_Click(sender, e);
+			e.Handled = true;
+		}
+		else if (e.Key == Key.PageDown && ViewModel.SelectedAnnotation != null)
+		{
+			SendToBackMenuItem_Click(sender, e);
 			e.Handled = true;
 		}
 	}
@@ -215,6 +277,17 @@ public partial class MainWindow : MetroWindow
 		// Auswahl-Werkzeug
 		if (ViewModel.CurrentTool == AnnotationType.Selection)
 		{
+			// Zuerst prüfen, ob auf einen Resize-Handle geklickt wurde
+			var handle = ViewModel.FindResizeHandleAt(position);
+			if (handle != null)
+			{
+				_isResizing = true;
+				_activeHandle = handle;
+				_lastMousePosition = position;
+				Mouse.Capture(OverlayCanvas);
+				return;
+			}
+
 			var selected = ViewModel.SelectAnnotationAt(position);
 			if (selected != null)
 			{
@@ -237,32 +310,7 @@ public partial class MainWindow : MetroWindow
 					}), System.Windows.Threading.DispatcherPriority.Loaded);
 				}
 
-				// Prüfe ob auf Resize-Handle geklickt wurde (nicht für Text-Elemente)
-				if (selected.Type != AnnotationType.Text)
-				{
-					var bounds = selected.GetBounds();
-					var handleRect = new Rect(
-							bounds.Right - 5,
-							bounds.Bottom - 5,
-							10,
-							10
-					);
-
-					if (handleRect.Contains(position))
-					{
-						_isResizing = true;
-						_isDragging = false;
-						Mouse.Capture(OverlayCanvas);
-					}
-					else
-					{
-						Mouse.Capture(OverlayCanvas);
-					}
-				}
-				else
-				{
-					Mouse.Capture(OverlayCanvas);
-				}
+				Mouse.Capture(OverlayCanvas);
 			}
 			else
 			{
@@ -359,30 +407,19 @@ public partial class MainWindow : MetroWindow
 			return;
 		}
 
+		// Resize-Handle verschieben
+		if (_isResizing && _activeHandle != null && ViewModel.SelectedAnnotation != null)
+		{
+			ViewModel.ResizeSelectedAnnotationWithHandle(_activeHandle.Type, position);
+			_lastMousePosition = position;
+			return;
+		}
+
 		// Verschieben einer ausgewählten Annotation
 		if (_isDragging && ViewModel.SelectedAnnotation != null)
 		{
 			var offset = position - _lastMousePosition;
 			ViewModel.MoveSelectedAnnotation(offset);
-			_lastMousePosition = position;
-			return;
-		}
-
-		// Skalieren einer ausgewählten Annotation
-		if (_isResizing && ViewModel.SelectedAnnotation != null)
-		{
-			var bounds = ViewModel.SelectedAnnotation.GetBounds();
-			var center = new Point(bounds.Left + bounds.Width / 2, bounds.Top + bounds.Height / 2);
-
-			var oldDistance = (_lastMousePosition - center).Length;
-			var newDistance = (position - center).Length;
-
-			if (oldDistance > 0)
-			{
-				var scaleFactor = newDistance / oldDistance;
-				ViewModel.ScaleSelectedAnnotation(scaleFactor, center);
-			}
-
 			_lastMousePosition = position;
 			return;
 		}
@@ -414,6 +451,7 @@ public partial class MainWindow : MetroWindow
 		_isResizing = false;
 		_isErasing = false;
 		_activeAnnotation = null;
+		_activeHandle = null;
 		Mouse.Capture(null);
 	}
 
@@ -439,10 +477,36 @@ public partial class MainWindow : MetroWindow
 		if (sender is Button btn && btn.Tag is string tag && Enum.TryParse<AnnotationType>(tag, out var tool))
 		{
 			ViewModel.CurrentTool = tool;
-			if (tool == AnnotationType.Eraser)
-				OverlayCanvas.Cursor = _eraserCursor ?? Cursors.Cross;
-			else
-				OverlayCanvas.Cursor = Cursors.Arrow;
+			
+			// Setze passenden Cursor für jedes Werkzeug
+			switch (tool)
+			{
+				case AnnotationType.Selection:
+					OverlayCanvas.Cursor = Cursors.Arrow;
+					break;
+				case AnnotationType.Arrow:
+				case AnnotationType.Line:
+					OverlayCanvas.Cursor = Cursors.Cross;
+					break;
+				case AnnotationType.Text:
+					OverlayCanvas.Cursor = Cursors.IBeam;
+					break;
+				case AnnotationType.Number:
+					OverlayCanvas.Cursor = Cursors.Hand;
+					break;
+				case AnnotationType.Rectangle:
+				case AnnotationType.Ellipse:
+					OverlayCanvas.Cursor = Cursors.Cross;
+					break;
+				case AnnotationType.Eraser:
+					OverlayCanvas.Cursor = _eraserCursor ?? Cursors.Cross;
+					break;
+				default:
+					OverlayCanvas.Cursor = Cursors.Arrow;
+					break;
+			}
+			
+			// Deselektiere alle Annotations wenn nicht im Auswahl-Modus
 			if (tool != AnnotationType.Selection)
 				ViewModel.DeselectAll();
 		}
@@ -461,6 +525,72 @@ public partial class MainWindow : MetroWindow
 				cm.DataContext = DataContext; // damit Bindings funktionieren
 				cm.IsOpen = true;
 			}
+		}
+	}
+
+	// Kontextmenü-Handler für Annotations
+	private void DeleteAnnotationMenuItem_Click(object sender, RoutedEventArgs e)
+	{
+		if (ViewModel.SelectedAnnotation != null)
+		{
+			ViewModel.Annotations.Remove(ViewModel.SelectedAnnotation);
+			ViewModel.SelectedAnnotation = null;
+		}
+	}
+
+	private void CopyAnnotationMenuItem_Click(object sender, RoutedEventArgs e)
+	{
+		if (ViewModel.SelectedAnnotation != null)
+		{
+			// Erstelle eine Kopie der ausgewählten Annotation
+			var original = ViewModel.SelectedAnnotation;
+			var copy = new AnnotationModel
+			{
+				Type = original.Type,
+				Text = original.Text,
+				Number = original.Type == AnnotationType.Number ? ViewModel.NextNumber++ : original.Number,
+				Color = original.Color,
+				Thickness = original.Thickness,
+				Opacity = original.Opacity,
+				Scale = original.Scale,
+				ShapeStyle = original.ShapeStyle,
+				FontSize = original.FontSize
+			};
+
+			// Kopiere Punkte mit Offset
+			foreach (var point in original.Points)
+			{
+				copy.Points.Add(new Point(point.X + 20, point.Y + 20));
+			}
+
+			ViewModel.Annotations.Add(copy);
+
+			// Wähle die Kopie aus
+			ViewModel.DeselectAll();
+			copy.IsSelected = true;
+			ViewModel.SelectedAnnotation = copy;
+		}
+	}
+
+	private void BringToFrontMenuItem_Click(object sender, RoutedEventArgs e)
+	{
+		if (ViewModel.SelectedAnnotation != null)
+		{
+			// Entferne und füge am Ende hinzu (bringt nach vorne)
+			var annotation = ViewModel.SelectedAnnotation;
+			ViewModel.Annotations.Remove(annotation);
+			ViewModel.Annotations.Add(annotation);
+		}
+	}
+
+	private void SendToBackMenuItem_Click(object sender, RoutedEventArgs e)
+	{
+		if (ViewModel.SelectedAnnotation != null)
+		{
+			// Entferne und füge am Anfang hinzu (sendet nach hinten)
+			var annotation = ViewModel.SelectedAnnotation;
+			ViewModel.Annotations.Remove(annotation);
+			ViewModel.Annotations.Insert(0, annotation);
 		}
 	}
 }

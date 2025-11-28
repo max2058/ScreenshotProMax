@@ -21,6 +21,7 @@
     <converters:PointsToPointCollectionConverter x:Key="PointsToPointCollectionConverter" />
     <converters:OpacityToPercentageConverter x:Key="OpacityToPercentageConverter" />
     <converters:StringToShapeStyleConverter x:Key="StringToShapeStyleConverter" />
+    <converters:ResizeHandlesToVisibilityConverter x:Key="ResizeHandlesToVisibilityConverter" />
 
     <Style TargetType="Button" x:Key="ToolbarButton" BasedOn="{StaticResource MahApps.Styles.Button}">
       <Setter Property="Height" Value="36" />
@@ -89,6 +90,51 @@
       <Setter Property="Width" Value="1"/>
       <Setter Property="Margin" Value="8,0"/>
       <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Gray6}"/>
+    </Style>
+
+    <!-- Style für Resize-Handles -->
+    <Style x:Key="ResizeHandleStyle" TargetType="Rectangle">
+      <Setter Property="Width" Value="8" />
+      <Setter Property="Height" Value="8" />
+      <Setter Property="Fill" Value="DodgerBlue" />
+      <Setter Property="Stroke" Value="White" />
+      <Setter Property="StrokeThickness" Value="1" />
+      <Setter Property="Cursor" Value="SizeAll" />
+      <Style.Triggers>
+        <!-- Verschiedene Cursor für verschiedene Handle-Typen -->
+        <DataTrigger Binding="{Binding Type}" Value="TopLeft">
+          <Setter Property="Cursor" Value="SizeNWSE" />
+        </DataTrigger>
+        <DataTrigger Binding="{Binding Type}" Value="TopRight">
+          <Setter Property="Cursor" Value="SizeNESW" />
+        </DataTrigger>
+        <DataTrigger Binding="{Binding Type}" Value="BottomLeft">
+          <Setter Property="Cursor" Value="SizeNESW" />
+        </DataTrigger>
+        <DataTrigger Binding="{Binding Type}" Value="BottomRight">
+          <Setter Property="Cursor" Value="SizeNWSE" />
+        </DataTrigger>
+        <DataTrigger Binding="{Binding Type}" Value="MiddleLeft">
+          <Setter Property="Cursor" Value="SizeWE" />
+        </DataTrigger>
+        <DataTrigger Binding="{Binding Type}" Value="MiddleRight">
+          <Setter Property="Cursor" Value="SizeWE" />
+        </DataTrigger>
+        <DataTrigger Binding="{Binding Type}" Value="MiddleTop">
+          <Setter Property="Cursor" Value="SizeNS" />
+        </DataTrigger>
+        <DataTrigger Binding="{Binding Type}" Value="MiddleBottom">
+          <Setter Property="Cursor" Value="SizeNS" />
+        </DataTrigger>
+        <DataTrigger Binding="{Binding Type}" Value="StartPoint">
+          <Setter Property="Cursor" Value="SizeAll" />
+          <Setter Property="Fill" Value="Orange" />
+        </DataTrigger>
+        <DataTrigger Binding="{Binding Type}" Value="EndPoint">
+          <Setter Property="Cursor" Value="SizeAll" />
+          <Setter Property="Fill" Value="Red" />
+        </DataTrigger>
+      </Style.Triggers>
     </Style>
   </mah:MetroWindow.Resources>
 
@@ -240,7 +286,7 @@
       <!-- Tools -->
       <StackPanel Orientation="Horizontal" Margin="8,0">
         <!-- Arrow Tool -->
-        <Button Tag="Arrow" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Pfeil">
+        <Button Tag="Arrow" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Pfeil (A)">
           <Button.Template>
             <ControlTemplate TargetType="Button">
               <Grid>
@@ -266,7 +312,7 @@
         </Button>
 
         <!-- Line Tool -->
-        <Button Tag="Line" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Linie">
+        <Button Tag="Line" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Linie (L)">
           <Button.Template>
             <ControlTemplate TargetType="Button">
               <Grid>
@@ -292,7 +338,7 @@
         </Button>
 
         <!-- Text Tool -->
-        <Button Tag="Text" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Text">
+        <Button Tag="Text" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Text (T)">
           <Button.Template>
             <ControlTemplate TargetType="Button">
               <Grid>
@@ -318,7 +364,7 @@
         </Button>
 
         <!-- Number Tool -->
-        <Button Tag="Number" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Nummer">
+        <Button Tag="Number" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Nummer (N)">
           <Button.Template>
             <ControlTemplate TargetType="Button">
               <Grid>
@@ -344,7 +390,7 @@
         </Button>
 
         <!-- Rectangle Tool -->
-        <Button Tag="Rectangle" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Rechteck">
+        <Button Tag="Rectangle" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Rechteck (R)">
           <Button.Template>
             <ControlTemplate TargetType="Button">
               <Grid>
@@ -370,7 +416,7 @@
         </Button>
 
         <!-- Ellipse Tool -->
-        <Button Tag="Ellipse" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Kreis/Ellipse">
+        <Button Tag="Ellipse" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Kreis/Ellipse (E)">
           <Button.Template>
             <ControlTemplate TargetType="Button">
               <Grid>
@@ -398,7 +444,7 @@
         <Separator Style="{StaticResource Local.VerticalSeparator}" Height="10" Width="30"/>
 
         <!-- Selection Tool (noch nicht implementiert) -->
-        <Button Tag="Selection" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Auswahl">
+        <Button Tag="Selection" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Auswahl (S)">
           <Button.Template>
             <ControlTemplate TargetType="Button">
               <Grid>
@@ -408,6 +454,11 @@
                 <Rectangle x:Name="SelectedBar" Height="3" VerticalAlignment="Bottom" Fill="{DynamicResource MahApps.Brushes.Accent}" Visibility="Collapsed" RadiusX="2" RadiusY="2" />
               </Grid>
               <ControlTemplate.Triggers>
+                <DataTrigger Binding="{Binding CurrentTool}" Value="Selection">
+                  <Setter TargetName="Chrome" Property="Background" Value="#FFE4E9F2" />
+                  <Setter TargetName="Chrome" Property="BorderBrush" Value="#FFB5C3D1" />
+                  <Setter TargetName="SelectedBar" Property="Visibility" Value="Visible" />
+                </DataTrigger>
                 <Trigger Property="IsMouseOver" Value="True">
                   <Setter TargetName="Chrome" Property="Background" Value="#11000000" />
                   <Setter TargetName="Chrome" Property="BorderBrush" Value="#33000000" />
@@ -489,6 +540,91 @@
              Margin="6,0,0,0"
              FontSize="13"
              MinWidth="20"/>
+      </StackPanel>
+
+      <!-- Font Size (nur sichtbar bei Text) -->
+      <StackPanel Orientation="Horizontal" Margin="0,0,5,0">
+        <StackPanel.Style>
+          <Style TargetType="StackPanel">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding CurrentTool}" Value="Text">
+                <Setter Property="Visibility" Value="Visible" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </StackPanel.Style>
+        <iconPacks:PackIconMaterial Kind="FormatSize" 
+                                      HorizontalAlignment="Center" 
+                                      VerticalAlignment="Center" 
+                                      Margin="5,0,5,0"/>
+        <Slider Minimum="8" Maximum="72" Value="{Binding CurrentFontSize, Mode=TwoWay}"
+                  Width="90" Style="{StaticResource MahApps.Styles.Slider}"/>
+        <TextBlock Text="{Binding CurrentFontSize, StringFormat='{}{0:0}'}"
+             VerticalAlignment="Center"
+             Margin="6,0,0,0"
+             FontSize="13"
+             MinWidth="25"/>
+      </StackPanel>
+
+      <!-- Text Scale (nur sichtbar bei Text) -->
+      <StackPanel Orientation="Horizontal" Margin="0,0,5,0">
+        <StackPanel.Style>
+          <Style TargetType="StackPanel">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding CurrentTool}" Value="Text">
+                <Setter Property="Visibility" Value="Visible" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </StackPanel.Style>
+        <TextBlock Text="Größe:" 
+                     VerticalAlignment="Center" 
+                     Margin="0,0,6,0"
+                     FontSize="13"/>
+        <Slider Minimum="0.5" Maximum="3.0" Value="{Binding CurrentTextScale, Mode=TwoWay}"
+                  Width="80" Style="{StaticResource MahApps.Styles.Slider}"/>
+        <TextBlock VerticalAlignment="Center"
+             Margin="6,0,0,0"
+             FontSize="13"
+             MinWidth="35">
+          <TextBlock.Text>
+            <MultiBinding StringFormat="{}{0:0}%">
+              <Binding Path="CurrentTextScale" Converter="{StaticResource OpacityToPercentageConverter}" />
+            </MultiBinding>
+          </TextBlock.Text>
+        </TextBlock>
+      </StackPanel>
+
+      <!-- Number Scale (nur sichtbar bei Number) -->
+      <StackPanel Orientation="Horizontal" Margin="0,0,5,0">
+        <StackPanel.Style>
+          <Style TargetType="StackPanel">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding CurrentTool}" Value="Number">
+                <Setter Property="Visibility" Value="Visible" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </StackPanel.Style>
+        <TextBlock Text="Größe:" 
+                     VerticalAlignment="Center" 
+                     Margin="0,0,6,0"
+                     FontSize="13"/>
+        <Slider Minimum="0.8" Maximum="4.0" Value="{Binding CurrentNumberScale, Mode=TwoWay}"
+                  Width="80" Style="{StaticResource MahApps.Styles.Slider}"/>
+        <TextBlock VerticalAlignment="Center"
+             Margin="6,0,0,0"
+             FontSize="13"
+             MinWidth="35">
+          <TextBlock.Text>
+            <MultiBinding StringFormat="{}{0:0}%">
+              <Binding Path="CurrentNumberScale" Converter="{StaticResource OpacityToPercentageConverter}" />
+            </MultiBinding>
+          </TextBlock.Text>
+        </TextBlock>
       </StackPanel>
 
       <!-- Opacity -->
@@ -578,6 +714,32 @@
                 <ItemsControl.ItemTemplate>
                   <DataTemplate DataType="{x:Type models:AnnotationModel}">
                     <Canvas>
+                      <!-- Kontextmenü für ausgewählte Annotation -->
+                      <Canvas.ContextMenu>
+                        <ContextMenu>
+                          <MenuItem Header="Löschen" Click="DeleteAnnotationMenuItem_Click" InputGestureText="Entf">
+                            <MenuItem.Icon>
+                              <iconPacks:PackIconMaterial Kind="Delete" Width="16" Height="16"/>
+                            </MenuItem.Icon>
+                          </MenuItem>
+                          <MenuItem Header="Kopieren" Click="CopyAnnotationMenuItem_Click" InputGestureText="Strg+C">
+                            <MenuItem.Icon>
+                              <iconPacks:PackIconMaterial Kind="ContentCopy" Width="16" Height="16"/>
+                            </MenuItem.Icon>
+                          </MenuItem>
+                          <MenuItem Header="In den Vordergrund" Click="BringToFrontMenuItem_Click">
+                            <MenuItem.Icon>
+                              <iconPacks:PackIconMaterial Kind="ArrowTopLeft" Width="16" Height="16"/>
+                            </MenuItem.Icon>
+                          </MenuItem>
+                          <MenuItem Header="In den Hintergrund" Click="SendToBackMenuItem_Click">
+                            <MenuItem.Icon>
+                              <iconPacks:PackIconMaterial Kind="ArrowBottomRight" Width="16" Height="16"/>
+                            </MenuItem.Icon>
+                          </MenuItem>
+                        </ContextMenu>
+                      </Canvas.ContextMenu>
+
                       <!-- Line/Arrow mit Auswahl-Highlight -->
                       <Line Stroke="{Binding StrokeBrush}" 
                             StrokeThickness="{Binding Thickness}" 
@@ -827,7 +989,7 @@
                         </Border.Style>
                         <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" 
                                  Foreground="White" 
-                                 FontSize="16"
+                                 FontSize="{Binding FontSize}"
                                  FontWeight="SemiBold"
                                  Background="Transparent"
                                  BorderThickness="0"
@@ -854,6 +1016,28 @@
                           </TextBox.Style>
                         </TextBox>
                       </Border>
+
+                      <!-- Resize Handles für ausgewählte Anmerkungen -->
+                      <ItemsControl ItemsSource="{Binding ResizeHandles}"
+                                    Visibility="{Binding ResizeHandles, Converter={StaticResource ResizeHandlesToVisibilityConverter}}">
+                        <ItemsControl.ItemsPanel>
+                          <ItemsPanelTemplate>
+                            <Canvas />
+                          </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemContainerStyle>
+                          <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding Position.X, Converter={x:Static converters:SubtractConverter.Instance}, ConverterParameter=4}" />
+                            <Setter Property="Canvas.Top" Value="{Binding Position.Y, Converter={x:Static converters:SubtractConverter.Instance}, ConverterParameter=4}" />
+                          </Style>
+                        </ItemsControl.ItemContainerStyle>
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate>
+                            <Rectangle Style="{StaticResource ResizeHandleStyle}" 
+                                       Tag="{Binding}" />
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
                     </Canvas>
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>

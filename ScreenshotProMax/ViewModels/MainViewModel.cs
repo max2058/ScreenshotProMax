@@ -73,6 +73,15 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private bool isSettingsFlyoutOpen;
 
+    [ObservableProperty]
+    private double currentFontSize = 16.0;
+
+    [ObservableProperty]
+    private double currentTextScale = 1.2;  // Initiale Textgröße 120%
+
+    [ObservableProperty]
+    private double currentNumberScale = 1.5;  // Initiale Nummerngröße 150%
+
     public bool HasImage => CapturedImage != null;
     public bool CanUndo => _undoStack.Count > 0;
     public bool CanRedo => _redoStack.Count > 0;
@@ -276,10 +285,13 @@ public partial class MainViewModel : ObservableObject
         {
             annotation.Number = NextNumber++;
             annotation.Text = annotation.Number.ToString();
+            annotation.Scale = CurrentNumberScale;  // Setze initiale Nummer-Skalierung
         }
         else if (CurrentTool == AnnotationType.Text)
         {
             annotation.Text = "Text eingeben...";
+            annotation.FontSize = CurrentFontSize;  // Setze aktuelle Font-Größe
+            annotation.Scale = CurrentTextScale;    // Setze initiale Text-Skalierung
         }
 
         Annotations.Add(annotation);
@@ -386,6 +398,20 @@ public partial class MainViewModel : ObservableObject
 
         // Skaliere auch die Thickness
         SelectedAnnotation.Thickness *= scaleFactor;
+    }
+
+    public void ResizeSelectedAnnotationWithHandle(ResizeHandleType handleType, Point newPosition)
+    {
+        if (SelectedAnnotation == null) return;
+
+        SelectedAnnotation.ResizeWithHandle(handleType, newPosition);
+    }
+
+    public ResizeHandleInfo? FindResizeHandleAt(Point point)
+    {
+        if (SelectedAnnotation == null) return null;
+        
+        return SelectedAnnotation.HitTestHandle(point);
     }
 
     public void ResetAnnotations()

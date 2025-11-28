@@ -9,6 +9,8 @@ namespace ScreenshotProMax.Converters;
 /// </summary>
 public class SubtractConverter : IValueConverter
 {
+    public static SubtractConverter Instance { get; } = new();
+
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         if (value is double doubleValue && parameter is string paramStr && double.TryParse(paramStr, out double offset))

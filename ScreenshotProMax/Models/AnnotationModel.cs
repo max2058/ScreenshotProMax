@@ -25,6 +25,20 @@ public enum ShapeStyle
     FillOnly         // Nur Füllung
 }
 
+public enum ResizeHandleType
+{
+    TopLeft,
+    TopRight, 
+    BottomLeft,
+    BottomRight,
+    MiddleLeft,
+    MiddleRight,
+    MiddleTop,
+    MiddleBottom,
+    StartPoint,    // Für Linien/Pfeile - Startpunkt
+    EndPoint       // Für Linien/Pfeile - Endpunkt
+}
+
 public partial class AnnotationModel : ObservableObject
 {
     [ObservableProperty]
@@ -57,6 +71,9 @@ public partial class AnnotationModel : ObservableObject
     [ObservableProperty]
     private ShapeStyle shapeStyle = ShapeStyle.StrokeOnly;
 
+    [ObservableProperty]
+    private double fontSize = 16.0;  // Für Text-Annotationen
+
     public AnnotationModel()
     {
         // Reagiere auf Änderungen der Points-Collection
@@ -67,6 +84,7 @@ public partial class AnnotationModel : ObservableObject
             OnPropertyChanged(nameof(ArrowHeadLeft));
             OnPropertyChanged(nameof(ArrowHeadRight));
             OnPropertyChanged(nameof(ShapeBounds));
+            OnPropertyChanged(nameof(ResizeHandles));
         };
     }
 
@@ -77,6 +95,11 @@ public partial class AnnotationModel : ObservableObject
         OnPropertyChanged(nameof(ArrowHeadTip));
         OnPropertyChanged(nameof(ArrowHeadLeft));
         OnPropertyChanged(nameof(ArrowHeadRight));
+    }
+
+    partial void OnIsSelectedChanged(bool value)
+    {
+        OnPropertyChanged(nameof(ResizeHandles));
     }
 
     public SolidColorBrush StrokeBrush => new(Color) { Opacity = Opacity };
@@ -212,6 +235,63 @@ public partial class AnnotationModel : ObservableObject
         }
     }
 
+    // Berechnet Resize-Handles basierend auf dem Typ der Annotation
+    public ObservableCollection<ResizeHandleInfo> ResizeHandles
+    {
+        get
+        {
+            var handles = new ObservableCollection<ResizeHandleInfo>();
+
+            if (!IsSelected || Points.Count == 0)
+                return handles;
+
+            switch (Type)
+            {
+                case AnnotationType.Line:
+                case AnnotationType.Arrow:
+                    // Start- und Endpunkt als Handles
+                    if (Points.Count >= 2)
+                    {
+                        handles.Add(new ResizeHandleInfo { Position = Points[0], Type = ResizeHandleType.StartPoint });
+                        handles.Add(new ResizeHandleInfo { Position = Points[1], Type = ResizeHandleType.EndPoint });
+                    }
+                    break;
+
+                case AnnotationType.Rectangle:
+                case AnnotationType.Ellipse:
+                    // 8 Handles um das Shape herum
+                    var bounds = ShapeBounds;
+                    if (!bounds.IsEmpty)
+                    {
+                        handles.Add(new ResizeHandleInfo { Position = new Point(bounds.Left, bounds.Top), Type = ResizeHandleType.TopLeft });
+                        handles.Add(new ResizeHandleInfo { Position = new Point(bounds.Right, bounds.Top), Type = ResizeHandleType.TopRight });
+                        handles.Add(new ResizeHandleInfo { Position = new Point(bounds.Left, bounds.Bottom), Type = ResizeHandleType.BottomLeft });
+                        handles.Add(new ResizeHandleInfo { Position = new Point(bounds.Right, bounds.Bottom), Type = ResizeHandleType.BottomRight });
+                        handles.Add(new ResizeHandleInfo { Position = new Point(bounds.Left, bounds.Top + bounds.Height / 2), Type = ResizeHandleType.MiddleLeft });
+                        handles.Add(new ResizeHandleInfo { Position = new Point(bounds.Right, bounds.Top + bounds.Height / 2), Type = ResizeHandleType.MiddleRight });
+                        handles.Add(new ResizeHandleInfo { Position = new Point(bounds.Left + bounds.Width / 2, bounds.Top), Type = ResizeHandleType.MiddleTop });
+                        handles.Add(new ResizeHandleInfo { Position = new Point(bounds.Left + bounds.Width / 2, bounds.Bottom), Type = ResizeHandleType.MiddleBottom });
+                    }
+                    break;
+
+                case AnnotationType.Text:
+                case AnnotationType.Number:
+                    // 4 Eck-Handles für Text/Nummer
+                    var textBounds = GetBounds();
+                    if (!textBounds.IsEmpty)
+                    {
+                        handles.Add(new ResizeHandleInfo { Position = new Point(textBounds.Left, textBounds.Top), Type = ResizeHandleType.TopLeft });
+                        handles.Add(new ResizeHandleInfo { Position = new Point(textBounds.Right, textBounds.Top), Type = ResizeHandleType.TopRight });
+                        handles.Add(new ResizeHandleInfo { Position = new Point(textBounds.Left, textBounds.Bottom), Type = ResizeHandleType.BottomLeft });
+                        handles.Add(new ResizeHandleInfo { Position = new Point(textBounds.Right, textBounds.Bottom), Type = ResizeHandleType.BottomRight });
+                    }
+                    break;
+            }
+
+            return handles;
+        }
+    }
+
     // Bounding Box für Hit-Testing und Auswahl
     public Rect GetBounds()
     {
@@ -239,10 +319,9 @@ public partial class AnnotationModel : ObservableObject
         switch (Type)
         {
             case AnnotationType.Text:
-                // Für Text: Schätze die Größe basierend auf Textlänge
-                // Mindestbreite 80px (wie im XAML MinWidth), aber skalierbar
-                var estimatedTextWidth = System.Math.Max(80, Text.Length * 10);
-                var estimatedTextHeight = 30; // Geschätzte Höhe für FontSize 16
+                // Für Text: Schätze die Größe basierend auf Textlänge und Font-Size
+                var estimatedTextWidth = System.Math.Max(80, Text.Length * FontSize * 0.6);
+                var estimatedTextHeight = FontSize * 1.5;
                 
                 width = estimatedTextWidth * Scale;
                 height = estimatedTextHeight * Scale;
@@ -256,12 +335,12 @@ public partial class AnnotationModel : ObservableObject
                 );
 
             case AnnotationType.Number:
-                // Für Nummern: Feste Größe basierend auf Badge-Dimensionen
-                var estimatedNumberWidth = 32; // Geschätzte Breite für Nummer
-                var estimatedNumberHeight = 32; // Runder Badge
+                // Für Nummern: Feste Größe basierend auf Badge-Dimensionen und Scale
+                var estimatedNumberWidth = 32 * Scale;
+                var estimatedNumberHeight = 32 * Scale;
                 
-                width = estimatedNumberWidth * Scale;
-                height = estimatedNumberHeight * Scale;
+                width = estimatedNumberWidth;
+                height = estimatedNumberHeight;
                 padding = 8; // Border Padding aus XAML
                 
                 return new Rect(
@@ -291,6 +370,29 @@ public partial class AnnotationModel : ObservableObject
         return bounds.Contains(point);
     }
 
+    // Prüft ob ein Punkt auf einem Resize-Handle liegt
+    public ResizeHandleInfo? HitTestHandle(Point point)
+    {
+        const double handleSize = 8.0; // Größe der Handles
+        
+        foreach (var handle in ResizeHandles)
+        {
+            var handleBounds = new Rect(
+                handle.Position.X - handleSize / 2,
+                handle.Position.Y - handleSize / 2,
+                handleSize,
+                handleSize
+            );
+
+            if (handleBounds.Contains(point))
+            {
+                return handle;
+            }
+        }
+
+        return null;
+    }
+
     // Für Rechteck und Ellipse: Berechne Bounds aus zwei Punkten
     public Rect ShapeBounds
     {
@@ -310,4 +412,133 @@ public partial class AnnotationModel : ObservableObject
             );
         }
     }
+
+    // Hilfsmethode zum Anpassen von Punkten beim Resize
+    public void ResizeWithHandle(ResizeHandleType handleType, Point newPosition)
+    {
+        switch (Type)
+        {
+            case AnnotationType.Line:
+            case AnnotationType.Arrow:
+                if (handleType == ResizeHandleType.StartPoint && Points.Count >= 1)
+                {
+                    Points[0] = newPosition;
+                }
+                else if (handleType == ResizeHandleType.EndPoint && Points.Count >= 2)
+                {
+                    Points[1] = newPosition;
+                }
+                break;
+
+            case AnnotationType.Rectangle:
+            case AnnotationType.Ellipse:
+                ResizeShape(handleType, newPosition);
+                break;
+
+            case AnnotationType.Text:
+            case AnnotationType.Number:
+                ResizeText(handleType, newPosition);
+                break;
+        }
+    }
+
+    private void ResizeShape(ResizeHandleType handleType, Point newPosition)
+    {
+        if (Points.Count < 2) return;
+
+        var bounds = ShapeBounds;
+        var p1 = Points[0];
+        var p2 = Points[1];
+
+        switch (handleType)
+        {
+            case ResizeHandleType.TopLeft:
+                Points[0] = new Point(newPosition.X, newPosition.Y);
+                break;
+            case ResizeHandleType.TopRight:
+                Points[0] = new Point(bounds.Left, newPosition.Y);
+                Points[1] = new Point(newPosition.X, bounds.Bottom);
+                break;
+            case ResizeHandleType.BottomLeft:
+                Points[0] = new Point(newPosition.X, bounds.Top);
+                Points[1] = new Point(bounds.Right, newPosition.Y);
+                break;
+            case ResizeHandleType.BottomRight:
+                Points[1] = new Point(newPosition.X, newPosition.Y);
+                break;
+            case ResizeHandleType.MiddleLeft:
+                Points[0] = new Point(newPosition.X, bounds.Top);
+                break;
+            case ResizeHandleType.MiddleRight:
+                Points[1] = new Point(newPosition.X, bounds.Bottom);
+                break;
+            case ResizeHandleType.MiddleTop:
+                Points[0] = new Point(bounds.Left, newPosition.Y);
+                break;
+            case ResizeHandleType.MiddleBottom:
+                Points[1] = new Point(bounds.Right, newPosition.Y);
+                break;
+        }
+    }
+
+    private void ResizeText(ResizeHandleType handleType, Point newPosition)
+    {
+        if (Points.Count < 1) return;
+
+        var currentBounds = GetBounds();
+        var currentPos = Points[0];
+
+        // Berechne neue Größe basierend auf Handle-Position
+        double deltaX = 0;
+        double deltaY = 0;
+
+        switch (handleType)
+        {
+            case ResizeHandleType.TopLeft:
+                deltaX = currentBounds.Right - newPosition.X;
+                deltaY = currentBounds.Bottom - newPosition.Y;
+                Points[0] = newPosition;
+                break;
+            case ResizeHandleType.TopRight:
+                deltaX = newPosition.X - currentBounds.Left;
+                deltaY = currentBounds.Bottom - newPosition.Y;
+                Points[0] = new Point(currentBounds.Left, newPosition.Y);
+                break;
+            case ResizeHandleType.BottomLeft:
+                deltaX = currentBounds.Right - newPosition.X;
+                deltaY = newPosition.Y - currentBounds.Top;
+                Points[0] = new Point(newPosition.X, currentBounds.Top);
+                break;
+            case ResizeHandleType.BottomRight:
+                deltaX = newPosition.X - currentBounds.Left;
+                deltaY = newPosition.Y - currentBounds.Top;
+                break;
+        }
+
+        // Anpassen der Font-Size für Text basierend auf der Größenänderung
+        if (Type == AnnotationType.Text)
+        {
+            var scaleFactor = System.Math.Max(deltaX / currentBounds.Width, deltaY / currentBounds.Height);
+            if (scaleFactor > 0.1 && scaleFactor < 10) // Begrenze den Skalierungsfaktor
+            {
+                FontSize = System.Math.Max(8, System.Math.Min(72, FontSize * scaleFactor));
+            }
+        }
+        else if (Type == AnnotationType.Number)
+        {
+            // Für Nummern: Anpassung der Scale-Eigenschaft
+            var scaleFactor = System.Math.Max(deltaX / currentBounds.Width, deltaY / currentBounds.Height);
+            if (scaleFactor > 0.1 && scaleFactor < 5)
+            {
+                Scale = System.Math.Max(0.5, System.Math.Min(3.0, Scale * scaleFactor));
+            }
+        }
+    }
+}
+
+// Hilfsklasse für Resize-Handle-Informationen
+public class ResizeHandleInfo
+{
+    public Point Position { get; set; }
+    public ResizeHandleType Type { get; set; }
 }
