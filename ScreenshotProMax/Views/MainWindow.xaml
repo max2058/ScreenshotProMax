@@ -337,57 +337,120 @@
           <iconPacks:PackIconMaterial Kind="VectorPolylineEdit" />
         </Button>
 
-        <!-- Text Tool -->
-        <Button Tag="Text" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Text (T)">
-          <Button.Template>
-            <ControlTemplate TargetType="Button">
-              <Grid>
-                <Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="4">
-                  <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                </Border>
-                <Rectangle x:Name="SelectedBar" Height="3" VerticalAlignment="Bottom" Fill="{DynamicResource MahApps.Brushes.Accent}" Visibility="Collapsed" RadiusX="2" RadiusY="2" />
-              </Grid>
-              <ControlTemplate.Triggers>
+        <!-- Text Tool mit DropDown für Einstellungen -->
+        <mah:DropDownButton Width="50" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" 
+                            ToolTip="Text (T)" ArrowVisibility="Visible" Click="ToolButton_Click">
+          <mah:DropDownButton.Tag>
+            <system:String xmlns:system="clr-namespace:System;assembly=mscorlib">Text</system:String>
+          </mah:DropDownButton.Tag>
+          <mah:DropDownButton.Style>
+            <Style TargetType="mah:DropDownButton" BasedOn="{StaticResource {x:Type mah:DropDownButton}}">
+              <Setter Property="Background" Value="Transparent" />
+              <Setter Property="BorderBrush" Value="Transparent" />
+              <Setter Property="BorderThickness" Value="1" />
+              <Style.Triggers>
                 <DataTrigger Binding="{Binding CurrentTool}" Value="Text">
-                  <Setter TargetName="Chrome" Property="Background" Value="#FFE4E9F2" />
-                  <Setter TargetName="Chrome" Property="BorderBrush" Value="#FFB5C3D1" />
-                  <Setter TargetName="SelectedBar" Property="Visibility" Value="Visible" />
+                  <Setter Property="Background" Value="#FFE4E9F2" />
+                  <Setter Property="BorderBrush" Value="#FFB5C3D1" />
                 </DataTrigger>
                 <Trigger Property="IsMouseOver" Value="True">
-                  <Setter TargetName="Chrome" Property="Background" Value="#11000000" />
-                  <Setter TargetName="Chrome" Property="BorderBrush" Value="#33000000" />
+                  <Setter Property="Background" Value="#11000000" />
+                  <Setter Property="BorderBrush" Value="#33000000" />
                 </Trigger>
-              </ControlTemplate.Triggers>
-            </ControlTemplate>
-          </Button.Template>
-          <iconPacks:PackIconMaterial Kind="FormatTextbox" />
-        </Button>
+              </Style.Triggers>
+            </Style>
+          </mah:DropDownButton.Style>
+          <mah:DropDownButton.Content>
+            <iconPacks:PackIconMaterial Kind="FormatTextbox" />
+          </mah:DropDownButton.Content>
+          <mah:DropDownButton.Items>
+            <StackPanel Orientation="Vertical" Margin="10" MinWidth="250">
+              <TextBlock Text="Text-Einstellungen" FontWeight="Bold" Margin="0,0,0,10" FontSize="14"/>
+              
+              <!-- Font Size -->
+              <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                <iconPacks:PackIconMaterial Kind="FormatSize" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <TextBlock Text="Schriftgröße:" VerticalAlignment="Center" MinWidth="80"/>
+                <Slider Minimum="8" Maximum="72" Value="{Binding CurrentFontSize, Mode=TwoWay}"
+                        Width="120" Style="{StaticResource MahApps.Styles.Slider}" Margin="8,0"/>
+                <TextBlock Text="{Binding CurrentFontSize, StringFormat='{}{0:0}pt'}" VerticalAlignment="Center" MinWidth="35"/>
+              </StackPanel>
+              
+              <!-- Text Scale -->
+              <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                <iconPacks:PackIconMaterial Kind="MagnifyPlusOutline" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <TextBlock Text="Skalierung:" VerticalAlignment="Center" MinWidth="80"/>
+                <Slider Minimum="0.5" Maximum="3.0" Value="{Binding CurrentTextScale, Mode=TwoWay}"
+                        Width="120" Style="{StaticResource MahApps.Styles.Slider}" Margin="8,0"/>
+                <TextBlock VerticalAlignment="Center" MinWidth="35">
+                  <TextBlock.Text>
+                    <MultiBinding StringFormat="{}{0:0}%">
+                      <Binding Path="CurrentTextScale" Converter="{StaticResource OpacityToPercentageConverter}" />
+                    </MultiBinding>
+                  </TextBlock.Text>
+                </TextBlock>
+              </StackPanel>
+              
+              <Separator Margin="0,5"/>
+              
+              <Button Content="Text-Werkzeug aktivieren" Click="TextToolActivate_Click" 
+                      Style="{StaticResource MahApps.Styles.Button}" Margin="0,5,0,0"/>
+            </StackPanel>
+          </mah:DropDownButton.Items>
+        </mah:DropDownButton>
 
-        <!-- Number Tool -->
-        <Button Tag="Number" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Nummer (N)">
-          <Button.Template>
-            <ControlTemplate TargetType="Button">
-              <Grid>
-                <Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="4">
-                  <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                </Border>
-                <Rectangle x:Name="SelectedBar" Height="3" VerticalAlignment="Bottom" Fill="{DynamicResource MahApps.Brushes.Accent}" Visibility="Collapsed" RadiusX="2" RadiusY="2" />
-              </Grid>
-              <ControlTemplate.Triggers>
+        <!-- Number Tool mit DropDown für Einstellungen -->
+        <mah:DropDownButton Width="50" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" 
+                            ToolTip="Nummer (N)" ArrowVisibility="Visible" Click="ToolButton_Click">
+          <mah:DropDownButton.Tag>
+            <system:String xmlns:system="clr-namespace:System;assembly=mscorlib">Number</system:String>
+          </mah:DropDownButton.Tag>
+          <mah:DropDownButton.Style>
+            <Style TargetType="mah:DropDownButton" BasedOn="{StaticResource {x:Type mah:DropDownButton}}">
+              <Setter Property="Background" Value="Transparent" />
+              <Setter Property="BorderBrush" Value="Transparent" />
+              <Setter Property="BorderThickness" Value="1" />
+              <Style.Triggers>
                 <DataTrigger Binding="{Binding CurrentTool}" Value="Number">
-                  <Setter TargetName="Chrome" Property="Background" Value="#FFE4E9F2" />
-                  <Setter TargetName="Chrome" Property="BorderBrush" Value="#FFB5C3D1" />
-                  <Setter TargetName="SelectedBar" Property="Visibility" Value="Visible" />
+                  <Setter Property="Background" Value="#FFE4E9F2" />
+                  <Setter Property="BorderBrush" Value="#FFB5C3D1" />
                 </DataTrigger>
                 <Trigger Property="IsMouseOver" Value="True">
-                  <Setter TargetName="Chrome" Property="Background" Value="#11000000" />
-                  <Setter TargetName="Chrome" Property="BorderBrush" Value="#33000000" />
+                  <Setter Property="Background" Value="#11000000" />
+                  <Setter Property="BorderBrush" Value="#33000000" />
                 </Trigger>
-              </ControlTemplate.Triggers>
-            </ControlTemplate>
-          </Button.Template>
-          <iconPacks:PackIconMaterial Kind="Numeric1CircleOutline" />
-        </Button>
+              </Style.Triggers>
+            </Style>
+          </mah:DropDownButton.Style>
+          <mah:DropDownButton.Content>
+            <iconPacks:PackIconMaterial Kind="Numeric1CircleOutline" />
+          </mah:DropDownButton.Content>
+          <mah:DropDownButton.Items>
+            <StackPanel Orientation="Vertical" Margin="10" MinWidth="250">
+              <TextBlock Text="Nummer-Einstellungen" FontWeight="Bold" Margin="0,0,0,10" FontSize="14"/>
+              
+              <!-- Number Scale -->
+              <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                <iconPacks:PackIconMaterial Kind="MagnifyPlusOutline" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <TextBlock Text="Skalierung:" VerticalAlignment="Center" MinWidth="80"/>
+                <Slider Minimum="0.8" Maximum="4.0" Value="{Binding CurrentNumberScale, Mode=TwoWay}"
+                        Width="120" Style="{StaticResource MahApps.Styles.Slider}" Margin="8,0"/>
+                <TextBlock VerticalAlignment="Center" MinWidth="35">
+                  <TextBlock.Text>
+                    <MultiBinding StringFormat="{}{0:0}%">
+                      <Binding Path="CurrentNumberScale" Converter="{StaticResource OpacityToPercentageConverter}" />
+                    </MultiBinding>
+                  </TextBlock.Text>
+                </TextBlock>
+              </StackPanel>
+              
+              <Separator Margin="0,5"/>
+              
+              <Button Content="Nummer-Werkzeug aktivieren" Click="NumberToolActivate_Click" 
+                      Style="{StaticResource MahApps.Styles.Button}" Margin="0,5,0,0"/>
+            </StackPanel>
+          </mah:DropDownButton.Items>
+        </mah:DropDownButton>
 
         <!-- Rectangle Tool -->
         <Button Tag="Rectangle" Click="ToolButton_Click" Width="36" Height="32" Padding="0" Background="Transparent" BorderBrush="Transparent" ToolTip="Rechteck (R)">
@@ -542,91 +605,6 @@
              MinWidth="20"/>
       </StackPanel>
 
-      <!-- Font Size (nur sichtbar bei Text) -->
-      <StackPanel Orientation="Horizontal" Margin="0,0,5,0">
-        <StackPanel.Style>
-          <Style TargetType="StackPanel">
-            <Setter Property="Visibility" Value="Collapsed" />
-            <Style.Triggers>
-              <DataTrigger Binding="{Binding CurrentTool}" Value="Text">
-                <Setter Property="Visibility" Value="Visible" />
-              </DataTrigger>
-            </Style.Triggers>
-          </Style>
-        </StackPanel.Style>
-        <iconPacks:PackIconMaterial Kind="FormatSize" 
-                                      HorizontalAlignment="Center" 
-                                      VerticalAlignment="Center" 
-                                      Margin="5,0,5,0"/>
-        <Slider Minimum="8" Maximum="72" Value="{Binding CurrentFontSize, Mode=TwoWay}"
-                  Width="90" Style="{StaticResource MahApps.Styles.Slider}"/>
-        <TextBlock Text="{Binding CurrentFontSize, StringFormat='{}{0:0}'}"
-             VerticalAlignment="Center"
-             Margin="6,0,0,0"
-             FontSize="13"
-             MinWidth="25"/>
-      </StackPanel>
-
-      <!-- Text Scale (nur sichtbar bei Text) -->
-      <StackPanel Orientation="Horizontal" Margin="0,0,5,0">
-        <StackPanel.Style>
-          <Style TargetType="StackPanel">
-            <Setter Property="Visibility" Value="Collapsed" />
-            <Style.Triggers>
-              <DataTrigger Binding="{Binding CurrentTool}" Value="Text">
-                <Setter Property="Visibility" Value="Visible" />
-              </DataTrigger>
-            </Style.Triggers>
-          </Style>
-        </StackPanel.Style>
-        <TextBlock Text="Größe:" 
-                     VerticalAlignment="Center" 
-                     Margin="0,0,6,0"
-                     FontSize="13"/>
-        <Slider Minimum="0.5" Maximum="3.0" Value="{Binding CurrentTextScale, Mode=TwoWay}"
-                  Width="80" Style="{StaticResource MahApps.Styles.Slider}"/>
-        <TextBlock VerticalAlignment="Center"
-             Margin="6,0,0,0"
-             FontSize="13"
-             MinWidth="35">
-          <TextBlock.Text>
-            <MultiBinding StringFormat="{}{0:0}%">
-              <Binding Path="CurrentTextScale" Converter="{StaticResource OpacityToPercentageConverter}" />
-            </MultiBinding>
-          </TextBlock.Text>
-        </TextBlock>
-      </StackPanel>
-
-      <!-- Number Scale (nur sichtbar bei Number) -->
-      <StackPanel Orientation="Horizontal" Margin="0,0,5,0">
-        <StackPanel.Style>
-          <Style TargetType="StackPanel">
-            <Setter Property="Visibility" Value="Collapsed" />
-            <Style.Triggers>
-              <DataTrigger Binding="{Binding CurrentTool}" Value="Number">
-                <Setter Property="Visibility" Value="Visible" />
-              </DataTrigger>
-            </Style.Triggers>
-          </Style>
-        </StackPanel.Style>
-        <TextBlock Text="Größe:" 
-                     VerticalAlignment="Center" 
-                     Margin="0,0,6,0"
-                     FontSize="13"/>
-        <Slider Minimum="0.8" Maximum="4.0" Value="{Binding CurrentNumberScale, Mode=TwoWay}"
-                  Width="80" Style="{StaticResource MahApps.Styles.Slider}"/>
-        <TextBlock VerticalAlignment="Center"
-             Margin="6,0,0,0"
-             FontSize="13"
-             MinWidth="35">
-          <TextBlock.Text>
-            <MultiBinding StringFormat="{}{0:0}%">
-              <Binding Path="CurrentNumberScale" Converter="{StaticResource OpacityToPercentageConverter}" />
-            </MultiBinding>
-          </TextBlock.Text>
-        </TextBlock>
-      </StackPanel>
-
       <!-- Opacity -->
       <StackPanel Orientation="Horizontal">
         <iconPacks:PackIconMaterial Kind="CircleOpacity" 
@@ -646,8 +624,6 @@
           </TextBlock.Text>
         </TextBlock>
       </StackPanel>
-
-      <Separator Style="{StaticResource Local.VerticalSeparator}" Height="10" Width="30"/>
 
       <!-- Zoom -->
       <StackPanel Orientation="Horizontal">

@@ -217,7 +217,7 @@ public partial class MainWindow : MetroWindow
 		else if (e.Key == Key.N && Keyboard.Modifiers == ModifierKeys.None)
 		{
 			ViewModel.CurrentTool = AnnotationType.Number;
-			e.Handled = true;
+		 e.Handled = true;
 		}
 		else if (e.Key == Key.R && Keyboard.Modifiers == ModifierKeys.None)
 		{
@@ -474,7 +474,19 @@ public partial class MainWindow : MetroWindow
 
 	private void ToolButton_Click(object sender, RoutedEventArgs e)
 	{
-		if (sender is Button btn && btn.Tag is string tag && Enum.TryParse<AnnotationType>(tag, out var tool))
+		string? tag = null;
+
+		// Unterstützung für normale Buttons und DropDownButtons
+		if (sender is Button btn && btn.Tag is string buttonTag)
+		{
+			tag = buttonTag;
+		}
+		else if (sender is MahApps.Metro.Controls.DropDownButton dropDownBtn && dropDownBtn.Tag is string dropDownTag)
+		{
+			tag = dropDownTag;
+		}
+
+		if (!string.IsNullOrEmpty(tag) && Enum.TryParse<AnnotationType>(tag, out var tool))
 		{
 			ViewModel.CurrentTool = tool;
 			
@@ -592,5 +604,20 @@ public partial class MainWindow : MetroWindow
 			ViewModel.Annotations.Remove(annotation);
 			ViewModel.Annotations.Insert(0, annotation);
 		}
+	}
+
+	// DropDown Button Event-Handler
+	private void TextToolActivate_Click(object sender, RoutedEventArgs e)
+	{
+		ViewModel.CurrentTool = AnnotationType.Text;
+		OverlayCanvas.Cursor = Cursors.IBeam;
+		ViewModel.DeselectAll();
+	}
+
+	private void NumberToolActivate_Click(object sender, RoutedEventArgs e)
+	{
+		ViewModel.CurrentTool = AnnotationType.Number;
+		OverlayCanvas.Cursor = Cursors.Hand;
+		ViewModel.DeselectAll();
 	}
 }
