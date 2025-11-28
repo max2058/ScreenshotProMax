@@ -881,14 +881,14 @@
                               </MultiDataTrigger>
                               <!-- Nur Füllung -->
                               <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                  <Condition Binding="{Binding Type}" Value="Ellipse"/>
-                                  <Condition Binding="{Binding ShapeStyle}" Value="FillOnly"/>
-                                </MultiDataTrigger.Conditions>
-                                <Setter Property="Stroke" Value="Transparent" />
-                                <Setter Property="StrokeThickness" Value="0" />
-                                <Setter Property="Fill" Value="{Binding FillBrush}" />
-                              </MultiDataTrigger>
+                              <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Type}" Value="Ellipse"/>
+                                <Condition Binding="{Binding ShapeStyle}" Value="FillOnly"/>
+                              </MultiDataTrigger.Conditions>
+                              <Setter Property="Stroke" Value="Transparent" />
+                              <Setter Property="StrokeThickness" Value="0" />
+                              <Setter Property="Fill" Value="{Binding FillBrush}" />
+                            </MultiDataTrigger>
                               <!-- Highlight wenn ausgewählt -->
                               <DataTrigger Binding="{Binding IsSelected}" Value="True">
                                 <Setter Property="StrokeDashArray" Value="4,2" />
@@ -902,10 +902,12 @@
                       <Border Background="{Binding FillBrush}" 
                               BorderBrush="White" 
                               BorderThickness="2" 
-                              CornerRadius="16"
-                              Padding="8,4"
+                              CornerRadius="20"
+                              Padding="8,8"
                               Canvas.Left="{Binding Points[0].X}"
-                              Canvas.Top="{Binding Points[0].Y}">
+                              Canvas.Top="{Binding Points[0].Y}"
+                              MinWidth="40"
+                              MinHeight="40">
                         <Border.RenderTransform>
                           <ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}" />
                         </Border.RenderTransform>
@@ -930,7 +932,9 @@
                         <TextBlock Text="{Binding Text}" 
                                    Foreground="White" 
                                    FontWeight="Bold"
-                                   FontSize="14"/>
+                                   FontSize="14"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
                       </Border>
 
                       <!-- Text Label - Editable -->
