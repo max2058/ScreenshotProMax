@@ -1,0 +1,83 @@
+<mah:MetroWindow x:Class="ScreenshotProMax.Views.InitialSetupWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                 xmlns:controls="clr-namespace:ScreenshotProMax.Controls"
+                 xmlns:app="clr-namespace:ScreenshotProMax"
+                 mc:Ignorable="d"
+                 Title="ScreenshotProMax - Willkommen"
+                 Height="750"
+                 Width="540"
+                 ResizeMode="NoResize"
+                 WindowStartupLocation="CenterScreen"
+                 ShowMinButton="False"
+                 ShowMaxRestoreButton="False"
+                 ShowCloseButton="False"
+                 BorderThickness="1"
+                 GlowBrush="{DynamicResource MahApps.Brushes.Accent}">
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <!-- Header -->
+    <StackPanel Grid.Row="0" Background="{DynamicResource MahApps.Brushes.Accent}" Margin="0,0,0,20">
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="20">
+        <iconPacks:PackIconMaterial Kind="Camera" Width="32" Height="32" Foreground="White" VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <TextBlock Text="ScreenshotProMax" FontSize="24" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
+      </StackPanel>
+      <TextBlock Text="Willkommen! Bitte konfigurieren Sie die Anwendung vor dem ersten Start."
+                 FontSize="14"
+                 Foreground="White"
+                 HorizontalAlignment="Center"
+                 Margin="20,0,20,20"
+                 TextWrapping="Wrap"
+                 TextAlignment="Center"/>
+    </StackPanel>
+
+    <!-- Settings Content -->
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="10,0,10,0">
+      <StackPanel>
+        <Label Content="{Binding SettFlyHeader, Source={x:Static app:App.Loc}, Mode=OneWay}" FontSize="25" FontWeight="Bold"/>
+        <controls:SettingsFlyout x:Name="SettingsControl"/>
+
+        <!-- Additional Welcome Text -->
+        <Border Background="{DynamicResource MahApps.Brushes.Gray10}"
+                CornerRadius="5"
+                Padding="15">
+          <StackPanel>
+            <TextBlock Text="Wichtiger Hinweis:" FontWeight="Bold" FontSize="14" Margin="0,0,0,10"/>
+            <TextBlock TextWrapping="Wrap" FontSize="12" Margin="0,0,0,5">
+              Die Sprache, Dark/Light-Modus, Standard-Screenshot-App Einstellung kann jederzeit in den Einstellungen ge&#228;ndert werden
+            </TextBlock>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- Footer with buttons -->
+    <Border Grid.Row="2" Background="{DynamicResource MahApps.Brushes.Gray9}" Padding="20">
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+        <Button x:Name="CancelButton"
+                Content="Sp&#228;ter"
+                Style="{DynamicResource MahApps.Styles.Button.Dialogs.Accent}"
+                Width="100"
+                Height="35"
+                Margin="0,0,10,0"
+                Click="CancelButton_Click"/>
+        <Button x:Name="FinishButton"
+                Content="Fertig"
+                Style="{DynamicResource MahApps.Styles.Button.Dialogs.AccentHighlight}"
+                Width="100"
+                Height="35"
+                Click="FinishButton_Click"/>
+      </StackPanel>
+    </Border>
+  </Grid>
+</mah:MetroWindow>
