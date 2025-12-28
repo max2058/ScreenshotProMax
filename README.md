@@ -1,38 +1,39 @@
 # ScreenshotProMax
 
-Eine professionelle .NET 8 WPF Screenshot-Anwendung mit erweiterten Annotations-Features, inspiriert von Greenshot.
+A professional **.NET 8 WPF screenshot application** with advanced annotation features, inspired by Greenshot.  
+The application definitely has some rough edges and limitations here and there.
 
 ## 🎯 Features
 
-### Screenshot-Aufnahme
-- **Globaler Hotkey `Strg+D`**: Screenshot jederzeit aus jeder Anwendung starten
-- **Region-Auswahl**: Freies Rechteck auf dem Bildschirm auswählen
-- **Fenster-Erkennung**: Aktives Fenster automatisch erfassen
-- **Einzelner Bildschirm**: Primären Monitor aufnehmen
-- **Alle Bildschirme**: Multi-Monitor-Setup komplett erfassen
+### Screenshot Capture
+- **Global hotkey `Ctrl + D`**: Start a screenshot from anywhere, in any application
+- **Region selection**: Select a free rectangle area on the screen
+- **Window detection**: Automatically capture the active window
+- **Single screen**: Capture the primary monitor
+- **All screens**: Capture the entire multi-monitor setup
 
-### Annotations-Werkzeuge
-- **Pfeil**: Pfeile mit anpassbarer Dicke und Farbe
-- **Linie**: Gerade Linien zeichnen
-- **Text**: Texte auf Screenshots platzieren
-- **Nummerierung**: Fortlaufende Nummern für Schritt-für-Schritt-Anleitungen
-- **Freihand**: Freihand-Zeichnungen mit Stift-Werkzeug
+### Annotation Tools
+- **Arrow**: Draw arrows with adjustable thickness and color
+- **Line**: Draw straight lines
+- **Text**: Place text on screenshots
+- **Numbering**: Sequential numbers for step-by-step instructions
+- **Freehand**: Freehand drawing using a pen tool
 
-### Anpassbare Eigenschaften
-- **5 Farben**: Rot, Gelb, Grün, Cyan, Lila
-- **Variable Dicke**: 1-12 Pixel einstellbar
-- **Transparenz**: 0.2-1.0 (20%-100%)
+### Customizable Properties
+- **5 colors**: Red, Yellow, Green, Cyan, Purple
+- **Variable thickness**: Adjustable from 1–12 pixels
+- **Transparency**: 0.2–1.0 (20%–100%)
 
 ### Export
-- **PNG**: Verlustfreies Format
-- **JPEG**: Komprimiertes Format
-- Alle Annotations werden eingebrannt
+- **PNG**: Lossless format
+- **JPEG**: Compressed format
+- All annotations are permanently baked into the image
 
-## 🚀 Schnellstart
+## 🚀 Quick Start
 
-### Voraussetzungen
+### Prerequisites
 - Windows 10/11
-- .NET 8.0 SDK mit Windows Desktop-Workload
+- .NET 8.0 SDK with Windows Desktop workload
 
 ### Installation
 ```bash
@@ -42,95 +43,88 @@ dotnet build
 dotnet run --project ScreenshotProMax
 ```
 
-## 📖 Verwendung
+## 📖 Usage
 
-### Screenshot erstellen
-1. **Hotkey-Methode** (empfohlen):
-   - Drücke `Strg+D` von überall
-   - Ziehe ein Rechteck über den gewünschten Bereich
-   - Hauptfenster öffnet sich automatisch
+### Taking a Screenshot
 
-2. **Button-Methode**:
-   - Klicke auf einen der Capture-Buttons:
-     - **Region**: Bereich auswählen
-     - **Fenster**: Aktives Fenster
-     - **Bildschirm**: Primärer Monitor
-     - **Alle Bildschirme**: Alle Monitore
+1. **Hotkey method (recommended)**:
+   - Press `Ctrl + D` anywhere
+   - Drag a rectangle over the desired area
+   - The main window opens automatically
 
-### Annotationen hinzufügen
-1. Wähle ein Werkzeug (Pfeil, Linie, Text, Nummer, Freihand)
-2. Wähle Farbe, Dicke und Transparenz
-3. Klicke und ziehe auf dem Screenshot:
-   - **Pfeil/Linie**: Von Start zu Ende ziehen
-   - **Nummer/Text**: Einmal klicken
-   - **Freihand**: Ziehen zum Zeichnen
+2. **Button method**:
+   - Click one of the capture buttons:
+     - **Region**: Select a custom area
+     - **Window**: Capture the active window
+     - **Screen**: Capture the primary monitor
+     - **All Screens**: Capture all monitors
 
-### Speichern
-1. Klicke auf **Speichern**
-2. Wähle Format (PNG/JPEG) und Speicherort
-3. Alle Annotations werden automatisch eingebrannt
+### Adding Annotations
+1. Select a tool (Arrow, Line, Text, Number, Freehand)
+2. Choose color, thickness, and transparency
+3. Click and drag on the screenshot:
+   - **Arrow / Line**: Drag from start to end
+   - **Number / Text**: Single click
+   - **Freehand**: Drag to draw
 
-## 🏗️ Projektstruktur
+### Saving
+1. Click **Save**
+2. Choose format (PNG / JPEG) and destination
+3. All annotations are automatically merged into the image
+
+## 🏗️ Project Structure
 
 ```
 ScreenshotProMax/
 ├── Views/
-│   ├── MainWindow.xaml/xaml.cs           # Hauptfenster
-│   └── RegionSelectorWindow.xaml/xaml.cs # Region-Auswahl-Overlay
+│   ├── MainWindow.xaml/xaml.cs
+│   └── RegionSelectorWindow.xaml/xaml.cs
 ├── ViewModels/
-│   └── MainViewModel.cs                  # Haupt-ViewModel (MVVM)
+│   └── MainViewModel.cs
 ├── Models/
-│   └── AnnotationModel.cs                # Annotation-Datenmodell
+│   └── AnnotationModel.cs
 ├── Services/
-│   ├── ScreenshotService.cs              # Screenshot-Logik
-│   ├── ImageExportService.cs             # Export mit Annotations
-│   ├── HotkeyService.cs                  # Globaler Hotkey-Handler
-│   └── NativeMethods.cs                  # P/Invoke Windows-API
+│   ├── ScreenshotService.cs
+│   ├── ImageExportService.cs
+│   ├── HotkeyService.cs
+│   └── NativeMethods.cs
 ├── Converters/
-│   └── PointsToPointCollectionConverter.cs # XAML-Converter
+│   └── PointsToPointCollectionConverter.cs
 └── Themes/
-    └── Colors.xaml                       # Farbschema
+    └── Colors.xaml
 ```
 
-## 🔧 Technologie-Stack
+## 🔧 Technology Stack
 
-- **.NET 8.0** mit WPF
-- **MVVM Pattern** mit CommunityToolkit.Mvvm
-- **Global Hotkeys** via Windows API (user32.dll)
-- **Multi-Monitor-Support** via System.Windows.Forms.Screen
-- **GDI+ Screen Capture** mit System.Drawing
+- **.NET 8.0** with WPF
+- **MVVM pattern** using CommunityToolkit.Mvvm
+- **Global hotkeys** via Windows API (user32.dll)
+- **Multi-monitor support** via System.Windows.Forms.Screen
+- **GDI+ screen capture** using System.Drawing
 
-## 📝 Bekannte Einschränkungen
-- Hotkey `Strg+D` funktioniert nur während die Anwendung läuft
-- Windows-only (WPF + GDI+ Dependencies)
-- DPI-Awareness könnte auf High-DPI-Displays Anpassungen benötigen
+## 📝 Known Limitations
+- Hotkey `Ctrl + D` only works while the application is running
+- Windows-only (WPF + GDI+ dependencies)
+- DPI awareness may require improvements on high-DPI displays
 
 ## 🛠️ Development
 
-### Build
 ```bash
 dotnet build
-```
-
-### Run
-```bash
 dotnet run --project ScreenshotProMax
-```
-
-### Clean
-```bash
 dotnet clean
 ```
 
-## 📄 Lizenz
+## 📄 License
 
-Dieses Projekt steht unter der MIT-Lizenz.
+This project is licensed under the **MIT License**.
 
-## 🤝 Beiträge
+## 🤝 Contributing
 
-Contributions sind willkommen! Bitte erstelle einen Pull Request oder Issue.
+Contributions are welcome!  
+Feel free to open an issue or submit a pull request.
 
-## 📧 Kontakt
+## 📧 Contact
 
 - GitHub: [@max2058](https://github.com/max2058)
 - Repository: [ScreenshotProMax](https://github.com/max2058/ScreenshotProMax)
